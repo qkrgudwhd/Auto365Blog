@@ -1,0 +1,2054 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI BLOG MASTER 수강신청 | Auto365Blog EduTech (Stainless Edition)</title>
+  <meta name="description" content="33년 엔지니어의 AI 블로그 자동화 'Blog Master' — 플랫폼 통합 자동화로 잠자는 동안 돈을 법니다." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&family=Noto+Serif+KR:wght@600;700;900&family=Orbitron:wght@600;800;900&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <style>
+    /* ================================================================
+       🛠️ 스테인레스 스틸 색상 시스템
+       ─ 가독성 검증 (검정 #0a0e14 vs 라이트스틸 #d8dde3 = 대비비 11.7:1, AAA)
+       ─ (흰색 #ffffff vs 다크스틸 #1a1f26 = 대비비 16.5:1, AAA)
+       ─ (앰버 #FFC107 vs 다크스틸 #1a1f26 = 대비비 11.4:1, AAA)
+       ================================================================ */
+    :root {
+      /* 스테인레스 베이스 */
+      --steel-darkest: #0a0e14;   /* 거의 검정 (배경 베이스) */
+      --steel-dark:    #1a1f26;   /* 다크 스틸 */
+      --steel-mid:     #2d343d;   /* 미디엄 스틸 */
+      --steel-base:    #4a5560;   /* 기본 스틸 */
+      --steel-light:   #8a939e;   /* 라이트 스틸 */
+      --steel-bright:  #b8c0c8;   /* 밝은 스틸 */
+      --steel-shine:   #d8dde3;   /* 광택 (카드 배경) */
+      --steel-mirror:  #f0f3f6;   /* 미러 (가장 밝음) */
+
+      /* 강조색 — 스테인레스 위에서도 잘 보이는 색 */
+      --gold:          #FFC107;   /* 앰버 골드 (강조) */
+      --gold-deep:     #FFA000;   /* 진한 앰버 */
+      --cyan:          #00E5FF;   /* 사이안 (테크 강조) */
+      --cyan-deep:     #00B8D4;   /* 진한 사이안 */
+      --warning:       #FF6E40;   /* 따뜻한 오렌지 (CTA) */
+      --kakao-yellow:  #FEE500;   /* 카카오 공식 옐로우 */
+      --kakao-text:    #3C1E1E;   /* 카카오 공식 텍스트 */
+
+      /* 텍스트 */
+      --ink-on-light:  #0a0e14;   /* 라이트 카드 위 검정 */
+      --ink-on-light-soft: #2d343d;
+      --paper:         #ffffff;   /* 다크 위 흰색 */
+      --paper-soft:    #d8dde3;   /* 다크 위 보조 텍스트 */
+
+      /* 효과 */
+      --shadow-deep:   0 16px 48px rgba(0,0,0,0.6), 0 4px 12px rgba(0,0,0,0.4);
+      --shadow-card:   0 8px 28px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.4);
+      --inner-shine:   inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -1px 0 rgba(0,0,0,0.2);
+    }
+
+    /* ── 스테인레스 그라디언트 (재사용) ── */
+    /* 다크 브러시드 메탈 (배경) */
+    /* 라이트 폴리시드 메탈 (카드) */
+    /* 메탈릭 보더 */
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Noto Sans KR', 'Malgun Gothic', '맑은 고딕', sans-serif;
+      background: linear-gradient(180deg, #050810 0%, #0a0e14 100%);
+      color: var(--paper);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+    img { max-width: 100%; display: block; }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; }
+
+    /* ────────────────────────────────────
+       🌐 3D 배경 캔버스
+       ──────────────────────────────────── */
+    #bg-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+    #bg-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 1;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse at 50% 50%, transparent 0%, rgba(5,8,16,0.35) 100%),
+        repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(255,255,255,0.012) 2px, rgba(255,255,255,0.012) 3px);
+    }
+    /* ── 별빛 커서 캔버스 (최상단) ── */
+    #cursor-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 9999;
+      pointer-events: none;
+    }
+    body { cursor: none; }
+    a, button, input, select, textarea, label { cursor: none !important; }
+    main, header.nav, footer { position: relative; z-index: 2; }
+
+    /* ────────────────────────────────────
+       🧱 공통 레이아웃
+       ──────────────────────────────────── */
+    .container { max-width: 1140px; margin: 0 auto; padding: 0 24px; position: relative; }
+    section { padding: 100px 0; position: relative; }
+    .serif { font-family: 'Noto Serif KR', serif; }
+    .tech  { font-family: 'Orbitron', sans-serif; letter-spacing: 0.05em; }
+    .center { text-align: center; }
+
+    /* ── 스테인레스 카드 베이스 ── */
+    .steel-card {
+      background:
+        linear-gradient(135deg, var(--steel-mirror) 0%, var(--steel-shine) 35%, var(--steel-bright) 65%, var(--steel-shine) 100%);
+      color: var(--ink-on-light);
+      border: 1px solid var(--steel-light);
+      border-radius: 18px;
+      box-shadow: var(--shadow-card);
+      position: relative;
+      overflow: hidden;
+    }
+    .steel-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.9), transparent);
+    }
+    .steel-card-dark {
+      background:
+        linear-gradient(135deg, var(--steel-mid) 0%, var(--steel-dark) 50%, var(--steel-mid) 100%);
+      color: var(--paper);
+      border: 1px solid var(--steel-base);
+      border-radius: 18px;
+      box-shadow: var(--shadow-card);
+      position: relative;
+      overflow: hidden;
+    }
+    .steel-card-dark::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    }
+
+    .eyebrow {
+      display: inline-block;
+      padding: 6px 18px;
+      border-radius: 4px;
+      background: linear-gradient(135deg, var(--steel-dark), var(--steel-mid));
+      border: 1px solid var(--steel-base);
+      color: var(--gold);
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.15em;
+      margin-bottom: 20px;
+      text-shadow: 0 1px 0 rgba(0,0,0,0.6);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 2px 8px rgba(0,0,0,0.3);
+    }
+    .h-line {
+      width: 70px; height: 3px;
+      background: linear-gradient(90deg, var(--gold), var(--cyan));
+      border-radius: 99px;
+      margin: 18px auto 28px;
+      box-shadow: 0 0 12px rgba(255,193,7,0.5);
+    }
+    h1, h2, h3, h4 { line-height: 1.3; font-weight: 800; letter-spacing: -0.01em; }
+    h2.section-title {
+      font-size: clamp(1.9rem, 3.5vw, 2.6rem);
+      color: var(--paper);
+      text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+    }
+    .section-sub { color: var(--paper-soft); max-width: 700px; margin: 0 auto 50px; font-size: 1.05rem; text-shadow: 0 1px 4px rgba(0,0,0,0.6); }
+
+    /* ────────────────────────────────────
+       🚩 네비게이션
+       ──────────────────────────────────── */
+    header.nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+      background: linear-gradient(180deg, rgba(10,14,20,0.95), rgba(10,14,20,0.85));
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--steel-base);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 28px; max-width: 1200px; margin: 0 auto;
+    }
+    .logo {
+      font-weight: 900; font-size: 1.15rem; color: var(--paper);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .logo .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      background: linear-gradient(135deg, var(--steel-bright), var(--steel-shine));
+      color: var(--ink-on-light);
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 800;
+      border: 1px solid var(--steel-light);
+      letter-spacing: 0.1em;
+    }
+    .nav-links { display: flex; gap: 28px; }
+    .nav-links a { color: var(--paper-soft); font-weight: 600; font-size: 0.95rem; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-cta {
+      padding: 10px 22px; border-radius: 6px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-deep));
+      color: var(--ink-on-light); font-weight: 800;
+      border: 1px solid var(--gold-deep);
+      box-shadow: 0 4px 12px rgba(255,193,7,0.35), var(--inner-shine);
+      transition: transform 0.15s, box-shadow 0.2s;
+    }
+    .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(255,193,7,0.55), var(--inner-shine); }
+    @media (max-width: 720px) { .nav-links { display: none; } }
+
+    /* ────────────────────────────────────
+       🎯 HERO 섹션
+       ──────────────────────────────────── */
+    .hero { padding: 170px 0 120px; text-align: center; }
+    .hero-badge {
+      display: inline-block;
+      padding: 8px 22px;
+      background: linear-gradient(135deg, var(--steel-shine), var(--steel-bright));
+      color: var(--ink-on-light);
+      border-radius: 6px;
+      font-weight: 800;
+      font-size: 0.92rem;
+      margin-bottom: 26px;
+      border: 1px solid var(--steel-light);
+      box-shadow: var(--shadow-card);
+      letter-spacing: 0.02em;
+    }
+    .hero-badge .dot {
+      display: inline-block; width: 8px; height: 8px;
+      background: var(--warning); border-radius: 50%;
+      margin-right: 8px; vertical-align: middle;
+      box-shadow: 0 0 8px var(--warning);
+      animation: blink 1.4s infinite;
+    }
+    @keyframes blink { 50% { opacity: 0.3; } }
+
+    .hero h1 {
+      font-size: clamp(2rem, 4.8vw, 3.6rem);
+      color: var(--paper);
+      margin-bottom: 24px;
+      text-shadow: 0 2px 12px rgba(0,0,0,0.7);
+    }
+    .hero h1 .hl {
+      background: linear-gradient(135deg, var(--gold), var(--cyan));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 2px 8px rgba(255,193,7,0.4));
+    }
+    .hero .sub {
+      font-size: clamp(1rem, 1.8vw, 1.2rem);
+      color: var(--paper-soft);
+      max-width: 720px; margin: 0 auto 42px;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+    }
+    .hero-ctas { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+    /* ── 메탈릭 버튼 ── */
+    .btn-steel {
+      padding: 16px 34px;
+      background:
+        linear-gradient(180deg, var(--steel-mirror) 0%, var(--steel-shine) 50%, var(--steel-bright) 51%, var(--steel-shine) 100%);
+      color: var(--ink-on-light);
+      border: 1px solid var(--steel-light);
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 1.05rem;
+      box-shadow: var(--shadow-card);
+      transition: transform 0.15s, box-shadow 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-steel:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 36px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.5);
+    }
+    .btn-gold {
+      padding: 16px 34px;
+      background: linear-gradient(180deg, #FFD54F 0%, #FFC107 50%, #FFA000 51%, #FFC107 100%);
+      color: var(--ink-on-light);
+      border: 1px solid var(--gold-deep);
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 1.05rem;
+      box-shadow: 0 8px 24px rgba(255,193,7,0.4), var(--inner-shine);
+      transition: transform 0.15s, box-shadow 0.2s;
+    }
+    .btn-gold:hover { transform: translateY(-3px); box-shadow: 0 14px 32px rgba(255,193,7,0.6), var(--inner-shine); }
+
+    .hero-stats {
+      display: flex; gap: 36px; justify-content: center; flex-wrap: wrap;
+      margin-top: 70px; padding-top: 40px;
+      border-top: 1px solid var(--steel-base);
+    }
+    .stat-num {
+      font-size: 2.4rem; font-weight: 900;
+      background: linear-gradient(135deg, var(--gold), var(--cyan));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: block;
+      filter: drop-shadow(0 2px 6px rgba(255,193,7,0.3));
+    }
+    .stat-lbl { color: var(--paper-soft); font-size: 0.92rem; font-weight: 600; }
+
+    /* ────────────────────────────────────
+       👤 ABOUT
+       ──────────────────────────────────── */
+    .about-grid {
+      display: grid; grid-template-columns: 1fr 1.4fr; gap: 50px; align-items: center;
+    }
+    @media (max-width: 820px) { .about-grid { grid-template-columns: 1fr; } }
+
+    .profile-card {
+      padding: 38px 32px; text-align: center;
+    }
+    .profile-avatar {
+      width: 140px; height: 140px;
+      margin: 0 auto 22px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 30% 30%, var(--steel-mirror), var(--steel-bright) 40%, var(--steel-light) 80%);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--ink-on-light); font-size: 3.2rem; font-weight: 900;
+      border: 4px solid var(--steel-mirror);
+      box-shadow:
+        inset 0 4px 8px rgba(255,255,255,0.6),
+        inset 0 -4px 8px rgba(0,0,0,0.2),
+        0 8px 24px rgba(0,0,0,0.4);
+      font-family: 'Noto Serif KR', serif;
+    }
+    .profile-name { font-size: 1.65rem; color: var(--ink-on-light); margin-bottom: 6px; }
+    .profile-role { color: var(--steel-mid); font-weight: 700; margin-bottom: 18px; font-size: 0.95rem; }
+    .profile-tags { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+    .profile-tag {
+      padding: 6px 14px;
+      background: linear-gradient(135deg, var(--steel-dark), var(--steel-mid));
+      color: var(--gold);
+      border-radius: 4px;
+      font-size: 0.8rem; font-weight: 700;
+      border: 1px solid var(--steel-base);
+    }
+
+    .about-text h2 {
+      font-size: clamp(1.7rem, 3vw, 2.4rem);
+      color: var(--paper);
+      margin-bottom: 20px;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+    }
+    .about-text p { color: var(--paper-soft); font-size: 1.05rem; margin-bottom: 14px; text-shadow: 0 1px 4px rgba(0,0,0,0.5); }
+    .vision-box {
+      margin-top: 26px; padding: 22px 26px;
+      background: linear-gradient(135deg, rgba(255,193,7,0.12), rgba(0,229,255,0.08));
+      border: 1px solid var(--steel-base);
+      border-left: 4px solid var(--gold);
+      border-radius: 0 12px 12px 0;
+    }
+    .vision-box strong { color: var(--gold); display: block; margin-bottom: 8px; font-size: 0.85rem; letter-spacing: 0.15em; }
+    .vision-box p { color: var(--paper); font-weight: 600; margin: 0; }
+
+    /* ────────────────────────────────────
+       ⭐ FEATURES
+       ──────────────────────────────────── */
+    .feat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 24px;
+    }
+    .feat-card {
+      padding: 34px 28px;
+      transition: transform 0.25s;
+    }
+    .feat-card:hover { transform: translateY(-8px); }
+    .feat-icon {
+      width: 60px; height: 60px;
+      background:
+        linear-gradient(135deg, var(--steel-dark), var(--steel-mid));
+      border: 1px solid var(--steel-base);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.7rem;
+      margin-bottom: 20px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .feat-card h3 { font-size: 1.2rem; color: var(--ink-on-light); margin-bottom: 10px; }
+    .feat-card p { color: var(--ink-on-light-soft); font-size: 0.96rem; line-height: 1.6; }
+
+    /* ────────────────────────────────────
+       🌐 ✦ 플랫폼 통합 자동화 구조 ✦ (메인 신규 섹션)
+       ──────────────────────────────────── */
+    .platform-section {
+      padding: 110px 0;
+    }
+    .platform-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      background: linear-gradient(135deg, var(--steel-mirror), var(--gold));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 2px 8px rgba(255,193,7,0.4));
+      margin-bottom: 8px;
+    }
+    .platform-sub {
+      font-size: 1.1rem;
+      color: var(--paper);
+      margin-bottom: 50px;
+      font-weight: 600;
+    }
+    .platform-sub .icon-bg {
+      display: inline-block;
+      padding: 4px 10px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-deep));
+      color: var(--ink-on-light);
+      border-radius: 4px;
+      margin-right: 8px;
+      font-weight: 800;
+    }
+
+    /* ── 플랫폼 표 (스테인레스 + 컬러 강조) ── */
+    .platform-table-wrap {
+      background:
+        linear-gradient(180deg, var(--steel-mirror) 0%, var(--steel-shine) 100%);
+      border: 1px solid var(--steel-light);
+      border-radius: 18px;
+      box-shadow: var(--shadow-deep);
+      overflow: hidden;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .platform-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 1rem;
+    }
+    .platform-table thead tr {
+      background:
+        linear-gradient(180deg, var(--steel-dark) 0%, var(--steel-darkest) 100%);
+    }
+    .platform-table thead th {
+      padding: 22px 20px;
+      color: var(--gold);
+      font-weight: 800;
+      font-size: 0.95rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border-bottom: 2px solid var(--gold);
+      text-shadow: 0 1px 0 rgba(0,0,0,0.6);
+      text-align: left;
+    }
+    .platform-table thead th:first-child { text-align: center; width: 28%; }
+    .platform-table thead th:last-child { text-align: center; width: 24%; }
+
+    .platform-table tbody tr {
+      border-bottom: 1px solid rgba(74,85,96,0.25);
+      transition: background 0.2s;
+    }
+    .platform-table tbody tr:nth-child(even) {
+      background: linear-gradient(180deg, var(--steel-bright), var(--steel-light));
+    }
+    .platform-table tbody tr:nth-child(odd) {
+      background: linear-gradient(180deg, var(--steel-shine), var(--steel-bright));
+    }
+    .platform-table tbody tr:hover {
+      background: linear-gradient(180deg, #ffeaa7, #fdcb6e);
+    }
+    .platform-table tbody td {
+      padding: 22px 20px;
+      color: var(--ink-on-light);
+      font-weight: 600;
+      vertical-align: middle;
+    }
+    .platform-table tbody td:first-child { text-align: center; }
+    .platform-table tbody td:last-child { text-align: center; }
+
+    .pf-name {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 16px;
+      background: linear-gradient(180deg, var(--steel-darkest), var(--steel-dark));
+      color: var(--paper);
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 0.95rem;
+      border: 1px solid var(--steel-base);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 2px 6px rgba(0,0,0,0.3);
+      min-width: 160px;
+      justify-content: center;
+    }
+    .pf-icon { font-size: 1.2rem; }
+
+    /* 플랫폼별 색상 배지 */
+    .pf-google   .pf-icon { color: #FBBC05; }
+    .pf-naver    .pf-icon { color: #03C75A; }
+    .pf-youtube  .pf-icon { color: #FF0000; }
+    .pf-insta    .pf-icon { background: linear-gradient(45deg,#fdf497,#fd5949,#d6249f,#285AEB); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+
+    /* 수익 배지 — WCAG AAA 통과 색상 (검증됨) */
+    .revenue-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 11px 20px;
+      background: linear-gradient(135deg, #15803d, #14532d);   /* 진한 그린 */
+      color: #ffffff;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 0.92rem;
+      box-shadow: 0 4px 14px rgba(20,83,45,0.5), inset 0 1px 0 rgba(255,255,255,0.25);
+      border: 1px solid #0f3a1f;
+      white-space: nowrap;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+      letter-spacing: 0.02em;
+    }
+    .revenue-badge.purple {
+      background: linear-gradient(135deg, #6b21a8, #4c1d95);   /* 진한 퍼플 */
+      box-shadow: 0 4px 14px rgba(76,29,149,0.5), inset 0 1px 0 rgba(255,255,255,0.25);
+      border-color: #2e1065;
+    }
+    .revenue-badge.red {
+      background: linear-gradient(135deg, #b91c1c, #7f1d1d);   /* 진한 레드 */
+      box-shadow: 0 4px 14px rgba(127,29,29,0.5), inset 0 1px 0 rgba(255,255,255,0.25);
+      border-color: #5a1313;
+    }
+    .revenue-badge.blue {
+      background: linear-gradient(135deg, #1e40af, #1e3a8a);   /* 진한 블루 */
+      box-shadow: 0 4px 14px rgba(30,58,138,0.5), inset 0 1px 0 rgba(255,255,255,0.25);
+      border-color: #172554;
+    }
+
+    /* 모바일 표 → 카드 변환 */
+    @media (max-width: 760px) {
+      .platform-table thead { display: none; }
+      .platform-table, .platform-table tbody, .platform-table tr, .platform-table td { display: block; }
+      .platform-table tbody tr { padding: 18px; border-radius: 12px; margin: 12px; }
+      .platform-table tbody td { text-align: left !important; padding: 8px 0; }
+      .platform-table tbody td::before {
+        content: attr(data-label);
+        display: block;
+        font-weight: 800;
+        color: var(--steel-dark);
+        font-size: 0.78rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        margin-bottom: 4px;
+      }
+    }
+
+    /* ────────────────────────────────────
+       💛 카카오 문의 버튼 (대형, 잘 보이게)
+       ──────────────────────────────────── */
+    .kakao-cta-wrap {
+      max-width: 640px;
+      margin: 50px auto 0;
+      padding: 36px;
+      text-align: center;
+      background:
+        linear-gradient(135deg, var(--steel-mid) 0%, var(--steel-dark) 100%);
+      border: 1px solid var(--steel-base);
+      border-radius: 18px;
+      box-shadow: var(--shadow-deep);
+      position: relative;
+      overflow: hidden;
+    }
+    .kakao-cta-wrap::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--kakao-yellow), transparent);
+    }
+    .kakao-cta-wrap h3 {
+      color: var(--paper);
+      font-size: 1.3rem;
+      margin-bottom: 8px;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    }
+    .kakao-cta-wrap p {
+      color: var(--paper-soft);
+      font-size: 0.95rem;
+      margin-bottom: 22px;
+    }
+    .kakao-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 38px;
+      background: linear-gradient(180deg, #FFEC4D 0%, #FEE500 50%, #F6CE00 51%, #FEE500 100%);
+      color: var(--kakao-text);
+      font-weight: 900;
+      font-size: 1.15rem;
+      border-radius: 12px;
+      border: 1px solid #C9A800;
+      box-shadow:
+        0 10px 28px rgba(254,229,0,0.4),
+        inset 0 1px 0 rgba(255,255,255,0.6),
+        inset 0 -2px 0 rgba(0,0,0,0.15);
+      transition: transform 0.15s, box-shadow 0.2s;
+      letter-spacing: 0.02em;
+    }
+    .kakao-btn:hover {
+      transform: translateY(-3px);
+      box-shadow:
+        0 14px 36px rgba(254,229,0,0.6),
+        inset 0 1px 0 rgba(255,255,255,0.6),
+        inset 0 -2px 0 rgba(0,0,0,0.15);
+    }
+    .kakao-btn .ic {
+      width: 28px; height: 28px;
+      background: var(--kakao-text);
+      color: var(--kakao-yellow);
+      border-radius: 6px;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 1rem;
+    }
+
+    /* ────────────────────────────────────
+       📝 신청서
+       ──────────────────────────────────── */
+    .apply-wrap {
+      max-width: 760px; margin: 0 auto;
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow: var(--shadow-deep);
+      border: 1px solid var(--steel-light);
+    }
+    .apply-head {
+      background: linear-gradient(135deg, var(--steel-darkest), var(--steel-dark));
+      color: var(--paper);
+      padding: 36px 40px;
+      text-align: center;
+      border-bottom: 2px solid var(--gold);
+    }
+    .apply-head h2 { font-size: 1.85rem; color: var(--paper); margin-bottom: 8px; text-shadow: 0 2px 6px rgba(0,0,0,0.5); }
+    .apply-head p { color: var(--paper-soft); }
+    .apply-body {
+      padding: 40px;
+      background: linear-gradient(180deg, var(--steel-mirror), var(--steel-shine));
+    }
+    .form-row { margin-bottom: 22px; }
+    .form-row label {
+      display: block;
+      font-weight: 700; color: var(--ink-on-light);
+      font-size: 0.95rem; margin-bottom: 8px;
+    }
+    .form-row label .req { color: var(--warning); margin-left: 4px; }
+    .input, .select, .textarea {
+      width: 100%;
+      padding: 14px 18px;
+      border: 1.5px solid var(--steel-light);
+      border-radius: 10px;
+      background: #fff;
+      color: var(--ink-on-light);
+      font-size: 1rem;
+      font-family: inherit;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.08);
+    }
+    .input:focus, .select:focus, .textarea:focus {
+      border-color: var(--cyan-deep);
+      box-shadow: 0 0 0 3px rgba(0,229,255,0.2), inset 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .textarea { resize: vertical; min-height: 110px; }
+    .check-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 10px;
+    }
+    .check-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 14px;
+      background: #fff;
+      border: 1.5px solid var(--steel-light);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: 600;
+      color: var(--ink-on-light-soft);
+      font-size: 0.93rem;
+    }
+    .check-item:hover { border-color: var(--cyan-deep); }
+    .check-item input { accent-color: var(--cyan-deep); width: 16px; height: 16px; }
+    .form-submit {
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(180deg, #FFD54F 0%, #FFC107 50%, #FFA000 51%, #FFC107 100%);
+      color: var(--ink-on-light);
+      border: 1px solid var(--gold-deep);
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 1.1rem;
+      box-shadow: 0 10px 28px rgba(255,193,7,0.45), var(--inner-shine);
+      transition: transform 0.15s, box-shadow 0.2s;
+      margin-top: 12px;
+    }
+    .form-submit:hover { transform: translateY(-2px); box-shadow: 0 14px 36px rgba(255,193,7,0.6), var(--inner-shine); }
+    .agree-box {
+      background: var(--steel-bright);
+      padding: 14px 18px;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      color: var(--ink-on-light-soft);
+      display: flex; align-items: flex-start; gap: 10px;
+      margin-bottom: 20px;
+      border: 1px solid var(--steel-light);
+    }
+
+    /* ────────────────────────────────────
+       💬 커뮤니티
+       ──────────────────────────────────── */
+    .comm-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 22px;
+    }
+    .comm-card {
+      padding: 30px 24px;
+      text-align: center;
+      transition: transform 0.2s;
+    }
+    .comm-card:hover { transform: translateY(-5px); }
+    .comm-card .ic { font-size: 2.2rem; margin-bottom: 14px; }
+    .comm-card h4 { color: var(--ink-on-light); margin-bottom: 6px; }
+    .comm-card p { color: var(--ink-on-light-soft); font-size: 0.92rem; margin-bottom: 16px; }
+    .comm-link {
+      display: inline-block;
+      padding: 9px 20px;
+      background: linear-gradient(180deg, var(--steel-darkest), var(--steel-dark));
+      color: var(--gold);
+      border: 1px solid var(--steel-base);
+      border-radius: 6px;
+      font-weight: 800;
+      font-size: 0.9rem;
+      transition: transform 0.15s;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 4px 10px rgba(0,0,0,0.3);
+    }
+    .comm-link:hover { transform: scale(1.05); }
+    .comm-link.kakao {
+      background: linear-gradient(180deg, #FFEC4D, #FEE500);
+      color: var(--kakao-text);
+      border-color: #C9A800;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), 0 4px 12px rgba(254,229,0,0.4);
+    }
+
+    /* ────────────────────────────────────
+       🦶 푸터
+       ──────────────────────────────────── */
+    footer {
+      background: linear-gradient(180deg, #050810, #000000);
+      color: var(--paper-soft);
+      padding: 50px 0 30px;
+      border-top: 1px solid var(--steel-base);
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr;
+      gap: 36px;
+      margin-bottom: 30px;
+    }
+    @media (max-width: 720px) { .footer-grid { grid-template-columns: 1fr; } }
+    footer h5 { color: var(--gold); margin-bottom: 12px; font-size: 1rem; letter-spacing: 0.05em; }
+    footer p, footer li { font-size: 0.9rem; color: var(--paper-soft); margin-bottom: 6px; }
+    footer ul { list-style: none; }
+    footer a:hover { color: var(--gold); }
+    .footer-copy {
+      text-align: center;
+      padding-top: 24px;
+      border-top: 1px solid var(--steel-base);
+      font-size: 0.85rem;
+      color: var(--steel-light);
+    }
+
+    /* ────────────────────────────────────
+       💬 모달
+       ──────────────────────────────────── */
+    .modal-bg {
+      position: fixed; inset: 0;
+      background: rgba(5,8,16,0.8);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center; justify-content: center;
+      z-index: 200;
+      padding: 20px;
+    }
+    .modal-bg.show { display: flex; }
+    .modal {
+      max-width: 440px; width: 100%;
+      padding: 40px 32px;
+      text-align: center;
+    }
+    .modal .ic-ok {
+      width: 70px; height: 70px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-deep));
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--ink-on-light); font-size: 2.2rem; margin: 0 auto 18px;
+      font-weight: 900;
+      box-shadow: 0 8px 24px rgba(255,193,7,0.4), inset 0 2px 4px rgba(255,255,255,0.5);
+    }
+    .modal h3 { color: var(--ink-on-light); margin-bottom: 10px; font-size: 1.4rem; }
+    .modal p { color: var(--ink-on-light-soft); margin-bottom: 24px; font-size: 0.96rem; }
+    .modal-close {
+      padding: 12px 36px;
+      background: linear-gradient(180deg, var(--steel-darkest), var(--steel-dark));
+      color: var(--gold);
+      border: 1px solid var(--steel-base);
+      border-radius: 8px;
+      font-weight: 800;
+    }
+
+    /* ────────────────────────────────────
+       ✨ 스크롤 페이드
+       ──────────────────────────────────── */
+    .fade-in { opacity: 0; transform: translateY(22px); transition: opacity 0.65s ease, transform 0.65s ease; }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+<!-- ===== 3D 배경 캔버스 ===== -->
+<canvas id="bg-canvas"></canvas>
+<div id="bg-overlay"></div>
+
+<!-- ===== 별빛 커서 캔버스 ===== -->
+<canvas id="cursor-canvas"></canvas>
+
+<!-- ===== 네비게이션 ===== -->
+<header class="nav">
+  <div class="nav-inner">
+    <div class="logo">
+      Auto365Blog
+      <span class="badge">EduTech</span>
+    </div>
+    <nav class="nav-links">
+      <a href="#about">강사소개</a>
+      <a href="#features">기능</a>
+      <a href="#curriculum">커리큘럼</a>
+      <a href="#apply">수강신청</a>
+    </nav>
+    <a href="#apply" class="nav-cta">신청하기</a>
+  </div>
+</header>
+
+<main>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-badge"><span class="dot"></span>2026년 6월 1기 모집중 — 선착순 20명</div>
+    <h1>
+      33년 엔지니어의 노하우, 이제 당신의<br />
+      <span class="hl">블로그가 잠자는 동안 돈을 법니다</span>
+    </h1>
+    <p class="sub">
+      AI가 글쓰고, 이미지 생성하고, 포스팅까지 자동으로.<br />
+      하나의 시스템으로 구글·네이버·유튜브·인스타까지 — 통합 자동 수익화.
+    </p>
+    <div class="hero-ctas">
+      <a href="#apply"><button class="btn-gold">📝 수강 신청하기</button></a>
+      <a href="#curriculum"><button class="btn-steel">📚 커리큘럼 보기</button></a>
+    </div>
+
+    <div class="hero-stats">
+      <div><span class="stat-num">33+</span><span class="stat-lbl">년 엔지니어 경력</span></div>
+      <div><span class="stat-num">4</span><span class="stat-lbl">통합 플랫폼</span></div>
+      <div><span class="stat-num">12</span><span class="stat-lbl">주 완성 과정</span></div>
+      <div><span class="stat-num">100%</span><span class="stat-lbl">자동화</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ABOUT (강사 소개) ===== -->
+<section id="about">
+  <div class="container">
+    <div class="center" style="margin-bottom: 40px;">
+      <span class="eyebrow">ABOUT INSTRUCTOR</span>
+      <h2 class="section-title serif">인생을 고치고 기술에 온기를 더하는<br>융합형 지식생산자, 박형종</h2>
+      <div class="h-line"></div>
+      <p class="section-sub" style="font-style: italic; max-width: 760px; margin: 16px auto;">
+        "컴퓨터를 수리하던 손으로 사람의 마음을 위로하고,<br>
+        차가운 AI 기술에 평생교육과 문학의 온기를 불어넣다."
+      </p>
+    </div>
+
+    <!-- 프로필 카드 (상단) -->
+    <div class="about-grid fade-in" style="margin-bottom: 56px;">
+      <div class="profile-card steel-card">
+        <div class="profile-avatar" style="padding: 0; overflow: hidden; background: transparent;">
+          <img src="src/profile.png"
+               alt="박형종 대표"
+               style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block;"
+               onerror="this.style.display='none'; this.parentElement.innerHTML='朴'; this.parentElement.style.display='flex'; this.parentElement.style.alignItems='center'; this.parentElement.style.justifyContent='center';" />
+        </div>
+        <h3 class="profile-name">박형종 대표</h3>
+        <div class="profile-role">Auto365Blog EduTech · 융합형 지식생산자</div>
+        <div class="profile-tags">
+          <span class="profile-tag">IT 엔지니어 35년</span>
+          <span class="profile-tag">융합 인문학 작가</span>
+          <span class="profile-tag">AI 평생학습 지도사</span>
+          <span class="profile-tag">심리상담 코치</span>
+        </div>
+      </div>
+      <div class="about-text">
+        <h3 class="serif" style="font-size: 1.45rem; margin-bottom: 16px;">1. 대표 키워드</h3>
+        <ul style="line-height: 2;">
+          <li><strong>35년 경력의 IT 엔지니어 &amp; 실업 경영인</strong></li>
+          <li><strong>초지능 시대와 인간의 실존</strong>을 성찰하는 융합 인문학 작가</li>
+          <li>시니어와 소상공인의 <strong>디지털 자립</strong>을 이끄는 AI 평생학습 지도사</li>
+          <li>마음의 궤적을 짚어내고 <strong>동기를 부여하는</strong> 심리상담 코치</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 2. 걸어온 길 -->
+    <div class="steel-card fade-in" style="padding: 32px; margin-bottom: 32px;">
+      <h3 class="serif" style="font-size: 1.45rem; margin-bottom: 20px;">2. 걸어온 길 (Career &amp; History)</h3>
+
+      <h4 style="color: var(--accent); margin: 18px 0 8px;">▸ 기술적 뿌리와 교육의 시작 (1988 ~ 1993)</h4>
+      <p>1988년 전자과를 졸업하며 하드웨어적 기틀을 다졌고, 1991년 육군 병장으로 제대하며 강인한 리더십을 체득했습니다. 이후 1993년 전산과를 졸업하며 하드웨어와 소프트웨어를 아우르는 전문 엔지니어로 성장하였고, 같은 해 컴퓨터학원 강사로 교단에 서며 '기술을 쉽게 전달하는 교수법'에 눈을 떴습니다.</p>
+
+      <h4 style="color: var(--accent); margin: 18px 0 8px;">▸ 실업 경영과 김해의 IT 버팀목 (1996 ~ 2025)</h4>
+      <p>1996년 '뉴컴퓨터학원' 원장으로 부임하여 수많은 인재를 양성하였고, 1997년에는 대한민국 컴퓨터 수리 인프라의 중심인 '(주)컴수리119' 대표이사를 역임하였습니다. 이후 경남 김해 지역에서 30년 이상 컴퓨터 관련 비즈니스를 굳건히 경영하며, 지역 사회의 디지털 인프라를 책임지는 신뢰받는 기술 거장으로 자리매김하였습니다.</p>
+
+      <h4 style="color: var(--accent); margin: 18px 0 8px;">▸ 배움을 멈추지 않는 도전과 학제간 융합 (현재)</h4>
+      <p>배움에는 끝이 없다는 신념 아래, <strong>메가평생교육원</strong>에서 사회복지학과 평생교육학을 이수하며 따뜻한 사회적 실천가로서의 기틀을 마련하고 있습니다. 동시에 <strong>한국열린사이버대학교 스마트AI경영학과 및 인공지능학과 3학년 2학기</strong> 과정에 재학하며 최첨단 AI 엔지니어링과 미래 비즈니스 융합 지식을 끊임없이 내재화하고 있습니다.</p>
+    </div>
+
+    <!-- 3. 저서 목록 -->
+    <div class="steel-card fade-in" style="padding: 32px; margin-bottom: 32px;">
+      <h3 class="serif" style="font-size: 1.45rem; margin-bottom: 12px;">3. 저서 목록 (Publications)</h3>
+      <p style="margin-bottom: 24px;">공학자로서의 <strong>차가운 머리</strong>와 시인·철학자로서의 <strong>따뜻한 가슴</strong>을 동시에 지닌 작가 박형종은 인간의 기술적 미래와 영혼의 내면을 다루는 명저들을 꾸준히 집필해 오고 있습니다.</p>
+
+      <h4 style="color: var(--accent); margin: 18px 0 12px;">[출간 중] Auto365Blog 자동화 프로그램 시리즈</h4>
+      <p style="margin-bottom: 12px;">파이썬(Python) 기반의 강력한 기술 엔진을 탑재하고, 검색엔진의 핵심 평가 기준인 <strong>구글 EEAT</strong> 및 <strong>네이버 DIA+</strong>를 완벽하게 충족하도록 설계된 국내 최고 수준의 무인 자동화 포스팅 지침서 시리즈입니다.</p>
+      <ul style="line-height: 1.9;">
+        <li>《Auto365Blog 자동화 프로그램 통합편》 — 기술적 총론과 통합 구동 메커니즘 마스터 가이드북</li>
+        <li>《Naver 블로그 365 자동 글쓰기》 — 네이버 스마트에디터 제어 최적화 실무서</li>
+        <li>《Tistory 블로그 365 자동 글쓰기》 — 구글 애드센스 수익형 자동화 모델 실전서</li>
+        <li>《Google 블로그 365 자동 글쓰기》 — Blogger API 연동·서치콘솔 최적화 전문서</li>
+        <li>《Wordpress 블로그 365 자동 글쓰기》 — REST API·JWT 기반 글로벌 웹 서버 구축서</li>
+      </ul>
+
+      <h4 style="color: var(--accent); margin: 24px 0 12px;">[인문 에세이 및 기술 철학서]</h4>
+      <ul style="line-height: 1.9;">
+        <li><strong>《인생을 고치고 별을 품다》 (2024, 유아이북스)</strong><br>
+          <em style="color: var(--steel-light);">"30년간 고장 난 컴퓨터를 수리하며 깨달은 인생의 수리 기법. 차가운 기계를 다루는 손끝에서 탄생한, 우리의 아픈 삶을 보듬고 마음속 가장 빛나는 별(꿈)을 품게 하는 따뜻한 치유의 기록."</em>
+        </li>
+        <li style="margin-top: 12px;"><strong>《AI 이후의 인간: 초지능 시대, 인간의 미래를 묻다》 (2024, 부크크)</strong><br>
+          <em style="color: var(--steel-light);">"인공지능학과 스마트AI경영학을 전공하는 공학도로서 던지는 날카로운 질문. 기술이 인간을 초월하는 시대에 역설적으로 우리가 지켜내야 할 '인간성'의 본질은 무엇인가를 성찰하는 책."</em>
+        </li>
+      </ul>
+
+      <h4 style="color: var(--accent); margin: 24px 0 12px;">[사계(Four Seasons) 시리즈 에세이집]</h4>
+      <p style="margin-bottom: 12px;">박형종 작가의 시선으로 바라본 삶의 순환과 계절의 미학을 담아낸 사계 연작 시리즈입니다.</p>
+      <ul style="line-height: 1.9;">
+        <li>《사계의 봄꽃: 탄생 · 희망 · 시작》</li>
+        <li>《사계의 여름꽃: 사랑 · 열정 · 성장》</li>
+        <li>《사계의 가을꽃: 성찰 · 인생 · 기억》</li>
+        <li>《사계의 겨울꽃: 고독 · 기다림 · 깨달음》</li>
+      </ul>
+    </div>
+
+    <!-- 4. 전문 역량 -->
+    <div class="steel-card fade-in" style="padding: 32px; margin-bottom: 32px;">
+      <h3 class="serif" style="font-size: 1.45rem; margin-bottom: 12px;">4. 전문 역량 및 자격 자산 (Value &amp; Credentials)</h3>
+      <p style="margin-bottom: 24px;">대표님이 보유하신 <strong>31개 이상의 전문 자격</strong>은 '기술, 경영, 교육, 복지, 심리 상담'의 5대 영역으로 정교하게 융합되어 교수 설계 및 컨설팅의 강력한 무기가 됩니다.</p>
+
+      <div class="about-grid" style="grid-template-columns: 1fr 1fr; gap: 20px;">
+        <div>
+          <h4 style="color: var(--accent); margin-bottom: 8px;">[Tech &amp; Data] 하이테크 엔지니어링·네트워크 인프라</h4>
+          <p style="font-size: 0.95rem;">전자기기교사 / 파이썬전문가 1급 / 빅데이터전문가 1급 / 정보보안전문가 / 네트워크전문가 1급 / 컴퓨터OA마스터 1급 / 컴퓨터활용능력 2급</p>
+        </div>
+        <div>
+          <h4 style="color: var(--accent); margin-bottom: 8px;">[AI &amp; Future] 4차 산업 기술·무인 기기 통제</h4>
+          <p style="font-size: 0.95rem;">인공지능(AI)전문가 1급 / AI프로젝트지도사 1급 / AI플랫폼비즈니스전문가 1급 / 4차산업마스터 1급 / 무인동력비행장치 4종 교육이수</p>
+        </div>
+        <div>
+          <h4 style="color: var(--accent); margin-bottom: 8px;">[Management &amp; CS] 데이터 기반 혁신·마케팅 실무</h4>
+          <p style="font-size: 0.95rem;">6시그마GB 1급 / AI마케팅전문가 1급 / 콘텐츠마케팅전문가 1급 / 유튜브크리에이터 1급 / e-비즈니스전문가 1급 / AI스마트CS전문가 1급</p>
+        </div>
+        <div>
+          <h4 style="color: var(--accent); margin-bottom: 8px;">[Welfare &amp; Education] 실버 복지·평생 학습</h4>
+          <p style="font-size: 0.95rem;">메가평생교육원 사회복지학·평생교육학 학업 중 / 노인교육지도사 1급 / 실버레크레이션지도자 1급 / 한국어지도사 1급 / 학교안전보안관 1급</p>
+        </div>
+        <div>
+          <h4 style="color: var(--accent); margin-bottom: 8px;">[Counseling &amp; Mind] 학습자 정서 케어·맞춤형 코칭</h4>
+          <p style="font-size: 0.95rem;">심리상담사 1급 / 노인심리상담사 1급 / MBTI심리분석사 1급 / 코칭리더십지도사 1급 / 스마트리더십지도사 1급 / 사주적성상담사 1급 / 타로심리상담사 1급</p>
+        </div>
+        <div>
+          <h4 style="color: var(--accent); margin-bottom: 8px;">[Etc. Expertise] 종합 직무 전문가</h4>
+          <p style="font-size: 0.95rem;">부동산권리분석사 1급 / 퍼스널컬러컨설턴트 1급</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. 지향하는 가치 -->
+    <div class="vision-box fade-in" style="text-align: left;">
+      <strong>★ VISION &amp; MISSION — 5. 지향하는 가치</strong>
+      <p style="font-style: italic; font-size: 1.1rem; margin: 12px 0;">"기계를 고치는 일은 기술이지만, 기계 너머의 삶을 고치는 일은 예술입니다."</p>
+      <p>평생 컴퓨터를 다루어 왔지만, 가장 소중하게 생각하는 가치는 언제나 <strong>'인간'</strong>이었습니다.</p>
+      <p style="margin-top: 10px;">인공지능 기술이 나날이 발전할수록 소외되는 시니어와 영세 소상공인들을 보며, 기술을 지배하는 자가 아닌 <strong>기술에서 소외된 이들을 위한 '평생 교육적 실천'</strong>을 결심했습니다.</p>
+      <p style="margin-top: 10px;">단순히 AI 프로그램의 작동법을 가르치는 강사에 머무르지 않고, 수강생이 스스로 고유한 정체성을 깨닫고 <strong>1인 지식 생산자(저자)로 거듭날 수 있도록 돕는 '동반자이자 러닝 코치'</strong>로서 세상에 기여하고자 합니다.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FEATURES ===== -->
+<section id="features">
+  <div class="container center">
+    <span class="eyebrow">CORE FEATURES</span>
+    <h2 class="section-title serif">Blog Master의 핵심 기능</h2>
+    <div class="h-line"></div>
+    <p class="section-sub">LLM과 멀티모달 AI의 힘으로, 블로그 운영의 모든 과정을 자동화합니다.</p>
+    <div class="feat-grid">
+      <div class="feat-card steel-card fade-in">
+        <div class="feat-icon">⚙️</div>
+        <h3>Blog Master Auto</h3>
+        <p>LLM 기반 자동 포스팅 및 SEO 최적화. 키워드 분석부터 발행까지 한 번에.</p>
+      </div>
+      <div class="feat-card steel-card fade-in">
+        <div class="feat-icon">🎨</div>
+        <h3>Multi-Modal AI</h3>
+        <p>본문에 최적화된 AI 이미지 및 영상을 자동으로 생성하고 삽입합니다.</p>
+      </div>
+      <div class="feat-card steel-card fade-in">
+        <div class="feat-icon">🔒</div>
+        <h3>Secure Logic</h3>
+        <p>API KEY 암호화 관리로 안전한 운영 환경을 보장합니다.</p>
+      </div>
+      <div class="feat-card steel-card fade-in">
+        <div class="feat-icon">💰</div>
+        <h3>AdSense Pass</h3>
+        <p>구글 애드센스 수익화를 위한 승인 전략 가이드를 함께 제공합니다.</p>
+      </div>
+    </div>
+
+    <!-- 별님 2026-05-28: 기능 소개 영상 — 임베드 차단(오류 153) 회피 → 썸네일 + 새 탭 -->
+    <div class="fade-in" style="margin-top: 56px;">
+      <h3 class="serif" style="font-size: 1.45rem; margin-bottom: 16px;">▶ 기능 소개 영상</h3>
+      <a href="https://www.youtube.com/watch?v=4InZbKXjHlY" target="_blank" rel="noopener"
+         style="display: block; position: relative; width: 100%; max-width: 960px; margin: 0 auto; aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden; box-shadow: 0 12px 40px rgba(0,0,0,0.5); cursor: pointer; text-decoration: none;">
+        <img src="https://img.youtube.com/vi/4InZbKXjHlY/maxresdefault.jpg"
+             alt="Auto365Blog 기능 소개 영상"
+             style="width: 100%; height: 100%; object-fit: cover; display: block;"
+             onerror="this.src='https://img.youtube.com/vi/4InZbKXjHlY/hqdefault.jpg';" />
+        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.45) 100%); transition: background 0.3s;"></div>
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 92px; height: 92px; background: rgba(255,0,0,0.95); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 24px rgba(0,0,0,0.6); transition: transform 0.2s;">
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="white">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+        </div>
+        <div style="position: absolute; bottom: 16px; left: 20px; right: 20px; color: #fff; font-size: 0.95rem; text-shadow: 0 2px 6px rgba(0,0,0,0.7);">
+          ▶ YouTube에서 재생 (새 탭)
+        </div>
+      </a>
+    </div>
+
+    <!-- 별님 2026-05-28: 추가 영상 (기존 영상) -->
+    <div class="fade-in" style="margin-top: 40px;">
+      <h3 class="serif" style="font-size: 1.45rem; margin-bottom: 16px;">▶ 상세 소개 영상</h3>
+      <a href="https://www.youtube.com/watch?v=kgQTwVTx-qs&t=1228s" target="_blank" rel="noopener"
+         style="display: block; position: relative; width: 100%; max-width: 960px; margin: 0 auto; aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden; box-shadow: 0 12px 40px rgba(0,0,0,0.5); cursor: pointer; text-decoration: none;">
+        <img src="https://img.youtube.com/vi/kgQTwVTx-qs/maxresdefault.jpg"
+             alt="Auto365Blog 상세 소개 영상"
+             style="width: 100%; height: 100%; object-fit: cover; display: block;"
+             onerror="this.src='https://img.youtube.com/vi/kgQTwVTx-qs/hqdefault.jpg';" />
+        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.45) 100%); transition: background 0.3s;"></div>
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 92px; height: 92px; background: rgba(255,0,0,0.95); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 24px rgba(0,0,0,0.6); transition: transform 0.2s;">
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="white">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+        </div>
+        <div style="position: absolute; bottom: 16px; left: 20px; right: 20px; color: #fff; font-size: 0.95rem; text-shadow: 0 2px 6px rgba(0,0,0,0.7);">
+          ▶ YouTube에서 재생 (20분 28초부터, 새 탭)
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ✦ 플랫폼 통합 자동화 구조 ✦ ===== -->
+<section id="curriculum" class="platform-section">
+  <div class="container center">
+    <span class="eyebrow">★ CURRICULUM</span>
+    <h2 class="platform-title">✦ 12주 완성 커리큘럼 ✦</h2>
+    <p class="platform-sub">
+      <span class="icon-bg">🤖</span>Claude AI 와 함께 파이썬 자동화 마스터부터 개인 저서 출간까지
+    </p>
+
+    <!-- 핵심 요약 박스 -->
+    <div class="fade-in" style="max-width: 1000px; margin: 0 auto 40px; padding: 28px 32px; background: rgba(255,255,255,0.04); border-radius: 12px; border-left: 4px solid var(--accent); text-align: left;">
+      <h3 class="serif" style="font-size: 1.3rem; margin-bottom: 12px;">🎯 핵심 요약</h3>
+      <p>본 과정은 파이썬 기반 블로그 자동화 프로그램 <strong>"Auto365Blog" 시리즈 5권</strong>을 핵심 교재로 진행됩니다. 수강생이 <strong>Claude AI</strong>를 활용하여 파이썬 자동화 코드를 직관적으로 분석·제어하고, 시스템 오류를 해결하는 <strong>전문 개발자(지사 창업)로 성장</strong>하는 것을 목표로 합니다. 본인의 프로그램 운용 경험을 바탕으로 <strong>개인 저서 출간</strong>까지 완수하는 기술·지식 융합형 최고위 과정입니다.</p>
+      <p style="margin-top: 12px; color: var(--steel-light); font-size: 0.95rem;">
+        ※ 복잡한 설치 과정인 Anaconda / VS Code 제외 — Claude AI 를 파이썬 코드 생성·가이드 파트너로 활용해 진입 장벽을 혁신적으로 낮췄습니다.
+      </p>
+    </div>
+
+    <!-- 4대 핵심 기술 카드 -->
+    <div class="fade-in" style="margin-bottom: 40px;">
+      <h3 class="serif" style="font-size: 1.45rem; margin-bottom: 20px;">🛠 Claude AI × 파이썬 자동화 4대 핵심 기술</h3>
+      <div class="feat-grid">
+        <div class="feat-card steel-card">
+          <div class="feat-icon">🔍</div>
+          <h3>BeautifulSoup & Scrapy</h3>
+          <p>웹 트렌드 키워드·고가치 데이터 수집 파이썬 크롤링 코드를 Claude AI 와 함께 설계하고 정제하는 전처리 파이프라인 구축</p>
+        </div>
+        <div class="feat-card steel-card">
+          <div class="feat-icon">🌐</div>
+          <h3>Selenium & Playwright</h3>
+          <p>가상 브라우저로 로그인·이미지 업로드·태그 삽입 등 인간의 웹 행동 모방. Claude AI 코드 생성을 통해 실전 적용</p>
+        </div>
+        <div class="feat-card steel-card">
+          <div class="feat-icon">💬</div>
+          <h3>LLM API 연동 & 문맥 제어</h3>
+          <p>생성형 AI API 통신으로 구글 EEAT·네이버 DIA+ 충족 원고 자동 생성. Claude AI 프롬프트 엔지니어링 기반</p>
+        </div>
+        <div class="feat-card steel-card">
+          <div class="feat-icon">⏰</div>
+          <h3>APScheduler 365일 자동화</h3>
+          <p>백그라운드 프로세싱·세션 유지로 지정 시간에 멈춤 없이 안전 구동되도록 Claude AI 코드 검증 기반 시스템 구축</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 12주 커리큘럼 표 -->
+    <div class="platform-table-wrap fade-in">
+      <h3 class="serif" style="font-size: 1.45rem; margin-bottom: 20px; text-align: left;">📅 12주 상세 커리큘럼</h3>
+      <table class="platform-table">
+        <thead>
+          <tr>
+            <th style="width: 70px;">주차</th>
+            <th>모듈</th>
+            <th>Claude AI × 파이썬 핵심 내용</th>
+            <th style="width: 130px;">성과품</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-label="주차"><strong>1주</strong></td>
+            <td data-label="모듈">Claude AI 환경 구축 + 파이썬 API 연동 기초</td>
+            <td data-label="핵심 내용">Claude AI 연동·프롬프트 기반 코드 생성 환경 최적화 / 파이썬 기초 문법·자동화 라이브러리 해석 / 플랫폼별 오픈 API 키 발급·자격증명</td>
+            <td data-label="성과품">환경 구축</td>
+          </tr>
+          <tr>
+            <td data-label="주차"><strong>2주</strong></td>
+            <td data-label="모듈">Claude AI 기반 크롤러 + 원고 생성 자동화</td>
+            <td data-label="핵심 내용">BeautifulSoup 타겟 키워드 추출 스크립트 / 파이썬-LLM API 데이터 정제·원고 생성 / SEO 메타데이터 자동 추출 구조화</td>
+            <td data-label="성과품">데이터 스크립트</td>
+          </tr>
+          <tr>
+            <td data-label="주차"><strong>3주</strong></td>
+            <td data-label="모듈"><span class="pf-name pf-naver"><span class="pf-icon">📝</span>Naver 블로그 365 자동화</span></td>
+            <td data-label="핵심 내용">[교재] Naver 블로그 365 자동 글쓰기 / Selenium 네이버 로그인·스마트에디터 동적 제어 / 알고리즘 맞춤 이미지·본문 랜덤 배치</td>
+            <td data-label="성과품">네이버 모듈</td>
+          </tr>
+          <tr>
+            <td data-label="주차"><strong>4주</strong></td>
+            <td data-label="모듈"><span class="pf-name pf-naver"><span class="pf-icon">📰</span>Tistory 블로그 365 자동화</span></td>
+            <td data-label="핵심 내용">[교재] Tistory 블로그 365 자동 글쓰기 / 티스토리 오픈 API·OAuth 2.0 인증 / 구글 애드센스 등 수익형 코드 자동 삽입</td>
+            <td data-label="성과품">티스토리 모듈</td>
+          </tr>
+          <tr>
+            <td data-label="주차"><strong>5주</strong></td>
+            <td data-label="모듈"><span class="pf-name pf-google"><span class="pf-icon">🌐</span>Google 블로그 365 자동화</span></td>
+            <td data-label="핵심 내용">[교재] Google 블로그 365 자동 글쓰기 / Blogger API·JSON 자격증명 인증 / 서치콘솔 URL 자동 등록·인덱싱</td>
+            <td data-label="성과품">구글 모듈</td>
+          </tr>
+          <tr>
+            <td data-label="주차"><strong>6주</strong></td>
+            <td data-label="모듈"><span class="pf-name pf-google"><span class="pf-icon">🅦</span>Wordpress 블로그 365 자동화</span></td>
+            <td data-label="핵심 내용">[교재] Wordpress 블로그 365 자동 글쓰기 / REST API·JWT 인증 기반 원격 포스팅 / 서버 인프라 연동·DB 제어</td>
+            <td data-label="성과품">워드프레스 모듈</td>
+          </tr>
+          <tr>
+            <td data-label="주차"><strong>7주</strong></td>
+            <td data-label="모듈">Auto365Blog 통합 제어 + 최적화</td>
+            <td data-label="핵심 내용">[교재] Auto365Blog 통합편 / 4대 플랫폼 통합 스케줄러(APScheduler) 멀티프로세싱 / AEO 최적화·필터링 우회 로직</td>
+            <td data-label="성과품">통합 프로그램</td>
+          </tr>
+          <tr>
+            <td data-label="주차"><strong>8주</strong></td>
+            <td data-label="모듈">Claude AI 예외 처리 + 네트워크 보안</td>
+            <td data-label="핵심 내용">웹사이트 UI 변경 시 Try-Except 분석 / IP 차단 방지 프록시·유동 IP 제어 / 자동화 프로그램 배포용 파이썬 컴파일·가공</td>
+            <td data-label="성과품">보안 스크립트</td>
+          </tr>
+          <tr>
+            <td data-label="주차"><strong>9주</strong></td>
+            <td data-label="모듈">비즈니스 모델링 + 솔루션 디스트리뷰터 창업</td>
+            <td data-label="핵심 내용">파이썬 소스코드 모듈화 → 플랫폼 분양 시스템 / Claude AI 오류 진단·기술 지원 매뉴얼 / 라이선스 발급·지사 경영 전략</td>
+            <td data-label="성과품">비즈니스 모델</td>
+          </tr>
+          <tr>
+            <td data-label="주차"><strong>10주</strong></td>
+            <td data-label="모듈">실무 교수 설계 + 기술 교육 방법론</td>
+            <td data-label="핵심 내용">비전공자·소상공인 단계별 AI 활용 교수법 / GUI 활용·사용자 매뉴얼 직관화 / 주차별 교수학습지도안 완성</td>
+            <td data-label="성과품">교수 계획서</td>
+          </tr>
+          <tr>
+            <td data-label="주차"><strong>11주</strong></td>
+            <td data-label="모듈">개인 저서 기획 + 출간 레이아웃</td>
+            <td data-label="핵심 내용">저자의 5종 출간 베스트북 구조 분석·벤치마킹 / 파이썬 툴 운용 데이터 기반 기술 가이드북 목차 / Claude AI 조력 출판 타겟 분석·서문 집필</td>
+            <td data-label="성과품">저서 목차·서문</td>
+          </tr>
+          <tr>
+            <td data-label="주차"><strong>12주</strong></td>
+            <td data-label="모듈">자가출판 플랫폼 등록 + 지식 창업 최종 런칭</td>
+            <td data-label="핵심 내용">부크크·교보문고 POD 등 무자본 자가출판 등록 실습 / 출간 저서 활용 기술 전문가 퍼스널 브랜딩 / <strong>[최종] 라이선스 + 저서 기획안</strong></td>
+            <td data-label="성과품"><strong>독립 개발자·저자 출범</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 시사점 박스 -->
+    <div class="fade-in" style="max-width: 1000px; margin: 40px auto 0; padding: 28px 32px; background: rgba(255,193,7,0.06); border-radius: 12px; border-left: 4px solid var(--accent); text-align: left;">
+      <h3 class="serif" style="font-size: 1.3rem; margin-bottom: 12px;">💡 시사점</h3>
+      <ul style="line-height: 1.9;">
+        <li><strong>진입 장벽의 혁신적 해소</strong> — 개발 환경 설정(Anaconda·VS Code)에서 좌절하기 쉬운 초보자·시니어 수강생들이 <strong>Claude AI 라는 대화형 도구</strong>로 파이썬 코드를 한글로 쉽게 이해·제어할 수 있어 교육 완성도가 비약적으로 상승합니다.</li>
+        <li style="margin-top: 8px;"><strong>검증된 교재 기반의 공신력</strong> — 저자가 직접 파이썬으로 개발하고 실제 출간하여 증명한 <strong>5권의 저서</strong>를 메인 텍스트로 사용하므로, Claude AI 활용 실무 코드 적용·개인 저서 출간 속도가 극대화됩니다.</li>
+      </ul>
+    </div>
+
+    <!-- 카카오 문의 CTA -->
+    <div class="kakao-cta-wrap fade-in" style="margin-top: 56px;">
+      <h3>지금 바로 시작하고 싶으신가요?</h3>
+      <p>오픈채팅으로 빠르게 상담받으실 수 있습니다 (평일 09~18시 응답)</p>
+      <a href="https://open.kakao.com/o/gwcemGqi" target="_blank" rel="noopener">
+        <button class="kakao-btn">
+          <span class="ic">K</span>
+          💬 카톡으로 문의하기
+        </button>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 신청서 ===== -->
+<section id="apply">
+  <div class="container">
+    <div class="center" style="margin-bottom: 40px;">
+      <span class="eyebrow">ENROLLMENT</span>
+      <h2 class="section-title serif">수강 신청서</h2>
+      <div class="h-line"></div>
+      <p class="section-sub">아래 정보를 입력해 주시면, 영업일 기준 1~2일 내에 담당자가 연락드립니다.</p>
+    </div>
+
+    <div class="apply-wrap fade-in">
+      <div class="apply-head">
+        <h2>AI BLOG MASTER 자동화 과정</h2>
+        <p>2026년 6월 1기 · 12주 완성 과정 · 온라인 + 현장 지원</p>
+      </div>
+      <div class="apply-body" style="padding: 0; background: #fff;">
+        <!-- 별님 2026-05-28: 자체 form → Google Form iframe 임베드 -->
+        <iframe
+          src="https://docs.google.com/forms/d/e/1FAIpQLSf_Wc2XU6pCEf2eOgObd0Xugr-7rfnnMmceKlBTcdUeHHTZgQ/viewform?embedded=true"
+          width="100%"
+          height="1400"
+          frameborder="0"
+          marginheight="0"
+          marginwidth="0"
+          style="display: block; border: 0;"
+          title="AI BLOG MASTER 수강 신청서 (Google Form)">
+          신청서를 불러오는 중입니다…
+        </iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 커뮤니티 ===== -->
+<section id="community">
+  <div class="container center">
+    <span class="eyebrow">COMMUNITY</span>
+    <h2 class="section-title serif">함께하는 학습 커뮤니티</h2>
+    <div class="h-line"></div>
+    <p class="section-sub">실시간 기술 지원과 수강생 네트워킹을 제공합니다.</p>
+    <div class="comm-grid">
+      <div class="comm-card steel-card fade-in">
+        <div class="ic">💬</div>
+        <h4>카카오톡 오픈채팅</h4>
+        <p>실시간 질문 & 기술 지원</p>
+        <a class="comm-link kakao" href="https://open.kakao.com/o/gwcemGqi" target="_blank" rel="noopener">바로가기</a>
+      </div>
+      <div class="comm-card steel-card fade-in">
+        <div class="ic">📝</div>
+        <h4>네이버 블로그</h4>
+        <p>수강 후기 & 운영 사례</p>
+        <a class="comm-link" href="https://blog.naver.com/com-365/224254785153" target="_blank" rel="noopener">방문하기</a>
+      </div>
+      <div class="comm-card steel-card fade-in">
+        <div class="ic">✉️</div>
+        <h4>이메일 문의</h4>
+        <p>phjcom3@gmail.com</p>
+        <a class="comm-link" href="mailto:phjcom3@gmail.com">메일쓰기</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ===== 푸터 ===== -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <h5>Auto365Blog EduTech</h5>
+        <p>한국자아실현협회</p>
+        <p>대표: 박형종</p>
+        <p>경남 김해시 주촌면 선지로85</p>
+      </div>
+      <div>
+        <h5>연락처</h5>
+        <ul>
+          <li>✉️ phjcom3@gmail.com</li>
+          <li>💬 카카오톡 오픈채팅</li>
+        </ul>
+      </div>
+      <div>
+        <h5>바로가기</h5>
+        <ul>
+          <li><a href="#about">강사 소개</a></li>
+          <li><a href="#features">핵심 기능</a></li>
+          <li><a href="#curriculum">커리큘럼</a></li>
+          <li><a href="#apply">수강 신청</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-copy">
+      © 2026 한국자아실현협회 · Auto365Blog EduTech (Gimhae Centum Q). All rights reserved.
+    </div>
+  </div>
+</footer>
+
+<!-- ===== 성공 모달 ===== -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal steel-card">
+    <div class="ic-ok">✓</div>
+    <h3 id="modalGreet">신청이 접수되었습니다!</h3>
+    <p>입력하신 이메일로 <strong>접수 확인 답장</strong>을 발송했습니다.<br />
+       영업일 기준 1~2일 내에 담당자가 직접 연락을 드리겠습니다.<br />
+       감사합니다 🙏</p>
+    <button class="modal-close" onclick="closeModal()">확인</button>
+  </div>
+</div>
+
+<!-- =====================================================
+     🌐 Three.js 마우스 물리 간섭 3D 배경
+     ===================================================== -->
+<script>
+(function() {
+  const canvas = document.getElementById('bg-canvas');
+  if (!canvas || typeof THREE === 'undefined') return;
+
+  const scene = new THREE.Scene();
+  scene.fog = new THREE.Fog(0x050810, 25, 90);
+  const camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 200);
+  camera.position.z = 45;
+
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+  // ──────────────────────────────────────────────
+  // 💡 조명 — 스테인레스 광택 극대화
+  // ──────────────────────────────────────────────
+  // 어두운 환경광 (검정 배경 위에서도 형태가 보이도록 최소한)
+  scene.add(new THREE.AmbientLight(0x1a2030, 0.35));
+
+  // Hemisphere: 위는 차가운 백색, 아래는 약한 스틸 블루 (메탈 톱/바텀 분리)
+  const hemi = new THREE.HemisphereLight(0xeaf0ff, 0x1a2535, 0.7);
+  scene.add(hemi);
+
+  // 메인 키 라이트 — 위에서 비추는 강한 화이트 (도형 윤곽 강조)
+  const keyLight = new THREE.DirectionalLight(0xffffff, 1.8);
+  keyLight.position.set(8, 25, 18);
+  scene.add(keyLight);
+
+  // 백색 림 라이트 — 도형 가장자리 광택용 (사이안 톤)
+  const rimLight1 = new THREE.DirectionalLight(0xa0d8ff, 1.4);
+  rimLight1.position.set(-22, 5, 12);
+  scene.add(rimLight1);
+
+  // 따뜻한 림 라이트 — 반대 면에 골드 광택
+  const rimLight2 = new THREE.DirectionalLight(0xffd47f, 1.2);
+  rimLight2.position.set(20, -12, 10);
+  scene.add(rimLight2);
+
+  // 후방 라이트 — 도형의 실루엣 살리기 (마젠타-퍼플)
+  const backLight = new THREE.DirectionalLight(0xc080ff, 0.7);
+  backLight.position.set(0, 5, -25);
+  scene.add(backLight);
+
+  // 회전하는 채색 포인트 라이트들 (도형 표면에 무지개빛 반사)
+  const colorLights = [
+    new THREE.PointLight(0x00d4ff, 2.5, 45),  // 사이안
+    new THREE.PointLight(0xffaa00, 2.2, 45),  // 앰버
+    new THREE.PointLight(0xff4080, 1.8, 40),  // 핑크
+    new THREE.PointLight(0x80ffaa, 1.5, 40),  // 민트
+  ];
+  colorLights.forEach(l => scene.add(l));
+
+  // 마우스를 따라가는 골드 스포트라이트
+  const mouseLight = new THREE.PointLight(0xFFD54F, 3.5, 30);
+  mouseLight.position.set(0, 0, 18);
+  scene.add(mouseLight);
+
+  // ──────────────────────────────────────────────
+  // 🌌 절차적 환경맵 생성 (도형 표면에 진짜 반사 효과)
+  // ──────────────────────────────────────────────
+  function makeEnvMap() {
+    const size = 256;
+    const cv = document.createElement('canvas');
+    cv.width = size; cv.height = size;
+    const ctx = cv.getContext('2d');
+    // 어두운 그라디언트 베이스
+    const g = ctx.createLinearGradient(0, 0, 0, size);
+    g.addColorStop(0,    '#3a4555');
+    g.addColorStop(0.4,  '#1a2030');
+    g.addColorStop(0.6,  '#0a0e14');
+    g.addColorStop(1,    '#050810');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, size, size);
+    // 밝은 광점 (반사로 보일 별빛)
+    for (let i = 0; i < 25; i++) {
+      const x = Math.random() * size, y = Math.random() * size * 0.6;
+      const r = 1 + Math.random() * 3;
+      const grd = ctx.createRadialGradient(x, y, 0, x, y, r * 4);
+      grd.addColorStop(0, 'rgba(255,255,255,0.95)');
+      grd.addColorStop(0.4, 'rgba(200,220,255,0.4)');
+      grd.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = grd; ctx.beginPath();
+      ctx.arc(x, y, r * 4, 0, Math.PI * 2); ctx.fill();
+    }
+    // 컬러 광원 흔적
+    ['rgba(255,193,7,0.25)','rgba(0,212,255,0.25)','rgba(255,128,200,0.18)'].forEach((c,i)=>{
+      const x = (i+1)*size/4, y = size*(0.3+i*0.2);
+      const grd = ctx.createRadialGradient(x, y, 0, x, y, 60);
+      grd.addColorStop(0, c); grd.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = grd; ctx.beginPath();
+      ctx.arc(x, y, 60, 0, Math.PI*2); ctx.fill();
+    });
+    const tex = new THREE.CanvasTexture(cv);
+    tex.mapping = THREE.EquirectangularReflectionMapping;
+    return tex;
+  }
+  const envMap = makeEnvMap();
+  scene.environment = envMap;
+
+  // ──────────────────────────────────────────────
+  // 🔷 큰 입체 도형 — 진짜 스테인레스 마감
+  // ──────────────────────────────────────────────
+  const geometries = [
+    new THREE.IcosahedronGeometry(2.6, 0),
+    new THREE.OctahedronGeometry(2.5, 0),
+    new THREE.DodecahedronGeometry(2.5, 0),
+    new THREE.TorusGeometry(2.0, 0.7, 20, 40),
+    new THREE.TorusKnotGeometry(1.6, 0.55, 100, 16),
+    new THREE.BoxGeometry(2.6, 2.6, 2.6),
+    new THREE.ConeGeometry(2.0, 3.4, 6),
+    new THREE.SphereGeometry(2.2, 32, 24),
+    new THREE.TetrahedronGeometry(2.8, 0),
+    new THREE.CylinderGeometry(1.6, 1.6, 3.2, 12)
+  ];
+
+  const shapes = [];
+  const SHAPE_COUNT = 14;
+
+  for (let i = 0; i < SHAPE_COUNT; i++) {
+    const geo = geometries[i % geometries.length];
+
+    // 도형 종류: 폴리시드 크롬(70%) / 골드(15%) / 사이안 크롬(15%)
+    const r = Math.random();
+    let baseColor, emissive, emissiveInt;
+    if (r < 0.15) {
+      // 골드 액센트
+      baseColor = 0xFFD54F;
+      emissive = 0xFFA000;
+      emissiveInt = 0.25;
+    } else if (r < 0.30) {
+      // 사이안 크롬 액센트
+      baseColor = 0xb8e8ff;
+      emissive = 0x0099cc;
+      emissiveInt = 0.18;
+    } else {
+      // 폴리시드 스테인레스 (가장 밝게)
+      baseColor = 0xeef2f7;
+      emissive = 0x1a2030;
+      emissiveInt = 0.08;
+    }
+
+    const mat = new THREE.MeshStandardMaterial({
+      color: baseColor,
+      metalness: 1.0,
+      roughness: 0.12,
+      emissive: emissive,
+      emissiveIntensity: emissiveInt,
+      envMap: envMap,
+      envMapIntensity: 1.6
+    });
+
+    const mesh = new THREE.Mesh(geo, mat);
+
+    // 배치 (배경 전체 분산)
+    const angle = (i / SHAPE_COUNT) * Math.PI * 2;
+    const radius = 18 + Math.random() * 12;
+    mesh.position.set(
+      Math.cos(angle) * radius,
+      Math.sin(angle) * radius * 0.7,
+      -8 - Math.random() * 18
+    );
+    mesh.rotation.set(
+      Math.random() * Math.PI * 2,
+      Math.random() * Math.PI * 2,
+      Math.random() * Math.PI * 2
+    );
+
+    mesh.userData = {
+      vx: (Math.random() - 0.5) * 0.02,
+      vy: (Math.random() - 0.5) * 0.02,
+      vz: (Math.random() - 0.5) * 0.008,
+      rx: (Math.random() - 0.5) * 0.008,
+      ry: (Math.random() - 0.5) * 0.008,
+      rz: (Math.random() - 0.5) * 0.005,
+      baseColor: baseColor,
+      baseEmissive: emissive,
+      baseEmissiveInt: emissiveInt,
+      isAccent: r < 0.30,
+      mass: 0.8 + Math.random() * 1.4
+    };
+
+    scene.add(mesh);
+    shapes.push(mesh);
+  }
+
+  // ── 마우스 추적 ──
+  const mouse3D = { x: 0, y: 0, z: 0 };
+  const mouseNDC = new THREE.Vector2(-999, -999);
+  const raycaster = new THREE.Raycaster();
+  const projPlane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+  const intersectPoint = new THREE.Vector3();
+
+  window.addEventListener('mousemove', e => {
+    mouseNDC.x = (e.clientX / window.innerWidth) * 2 - 1;
+    mouseNDC.y = (e.clientY / window.innerHeight) * -2 + 1;
+    raycaster.setFromCamera(mouseNDC, camera);
+    if (raycaster.ray.intersectPlane(projPlane, intersectPoint)) {
+      mouse3D.x = intersectPoint.x;
+      mouse3D.y = intersectPoint.y;
+    }
+    mouseLight.position.set(mouse3D.x, mouse3D.y, 18);
+  });
+
+  // ── 마우스 클릭 = 폭발 (도형들 강하게 밀어냄) ──
+  window.addEventListener('click', e => {
+    const cx = ((e.clientX / window.innerWidth) * 2 - 1) * 35;
+    const cy = ((e.clientY / window.innerHeight) * -2 + 1) * 22;
+    shapes.forEach(s => {
+      const dx = s.position.x - cx;
+      const dy = s.position.y - cy;
+      const d = Math.sqrt(dx*dx + dy*dy) + 0.1;
+      if (d < 22) {
+        const force = ((22 - d) / 22) * 1.2 / s.userData.mass;
+        s.userData.vx += (dx / d) * force;
+        s.userData.vy += (dy / d) * force;
+        s.userData.rx += (Math.random() - 0.5) * 0.08;
+        s.userData.ry += (Math.random() - 0.5) * 0.08;
+      }
+    });
+  });
+
+  // ── 메인 렌더 루프 ──
+  let t = 0;
+  function animate() {
+    requestAnimationFrame(animate);
+    t += 0.012;
+
+    // 골드 스포트라이트 미세 펄스
+    mouseLight.intensity = 2.8 + Math.sin(t * 2) * 0.7;
+
+    // 컬러 포인트 라이트들이 천천히 궤도 회전 (도형 표면에 반사)
+    colorLights.forEach((l, idx) => {
+      const phase = t * 0.4 + (idx / colorLights.length) * Math.PI * 2;
+      const orbitR = 22 + idx * 3;
+      l.position.x = Math.cos(phase) * orbitR;
+      l.position.y = Math.sin(phase * 1.3) * (orbitR * 0.7);
+      l.position.z = 8 + Math.sin(phase * 0.7) * 6;
+    });
+
+    shapes.forEach((s, i) => {
+      const ud = s.userData;
+      // 마우스 근처에서 밀어냄 (지속적 물리 간섭)
+      const dx = s.position.x - mouse3D.x;
+      const dy = s.position.y - mouse3D.y;
+      const d = Math.sqrt(dx*dx + dy*dy) + 0.1;
+
+      if (d < 13) {
+        const force = Math.pow((13 - d) / 13, 2) * 0.18 / ud.mass;
+        ud.vx += (dx / d) * force;
+        ud.vy += (dy / d) * force;
+        // 가까이 있으면 백금/골드빛으로 강하게 발광
+        const glow = (13 - d) / 13;
+        s.material.emissive.setHex(0xFFD54F);
+        s.material.emissiveIntensity = ud.baseEmissiveInt + glow * 0.6;
+      } else {
+        s.material.emissive.setHex(ud.baseEmissive);
+        s.material.emissiveIntensity = ud.baseEmissiveInt;
+      }
+
+      // 위치 업데이트
+      s.position.x += ud.vx;
+      s.position.y += ud.vy;
+      s.position.z += ud.vz;
+
+      // 마찰
+      ud.vx *= 0.975;
+      ud.vy *= 0.975;
+      ud.vz *= 0.99;
+
+      // 경계 충돌 (벽에 부딪히면 튕김)
+      const BX = 38, BY = 26, BZ_MIN = -32, BZ_MAX = 5;
+      if (s.position.x > BX) { s.position.x = BX; ud.vx *= -0.65; }
+      if (s.position.x < -BX) { s.position.x = -BX; ud.vx *= -0.65; }
+      if (s.position.y > BY) { s.position.y = BY; ud.vy *= -0.65; }
+      if (s.position.y < -BY) { s.position.y = -BY; ud.vy *= -0.65; }
+      if (s.position.z > BZ_MAX) { s.position.z = BZ_MAX; ud.vz *= -0.65; }
+      if (s.position.z < BZ_MIN) { s.position.z = BZ_MIN; ud.vz *= -0.65; }
+
+      // 회전
+      s.rotation.x += ud.rx;
+      s.rotation.y += ud.ry;
+      s.rotation.z += ud.rz;
+      ud.rx *= 0.995;
+      ud.ry *= 0.995;
+    });
+
+    // 도형 간 충돌 처리 (간단한 구체 충돌)
+    for (let i = 0; i < shapes.length; i++) {
+      for (let j = i + 1; j < shapes.length; j++) {
+        const a = shapes[i], b = shapes[j];
+        const dx = b.position.x - a.position.x;
+        const dy = b.position.y - a.position.y;
+        const dz = b.position.z - a.position.z;
+        const dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
+        const minDist = 5.5;
+        if (dist < minDist && dist > 0.001) {
+          const overlap = (minDist - dist) / 2;
+          const nx = dx / dist, ny = dy / dist, nz = dz / dist;
+          a.position.x -= nx * overlap;
+          a.position.y -= ny * overlap;
+          a.position.z -= nz * overlap;
+          b.position.x += nx * overlap;
+          b.position.y += ny * overlap;
+          b.position.z += nz * overlap;
+          // 속도 교환
+          const aSpeed = a.userData.vx * nx + a.userData.vy * ny;
+          const bSpeed = b.userData.vx * nx + b.userData.vy * ny;
+          const exchange = (bSpeed - aSpeed) * 0.5;
+          a.userData.vx += nx * exchange;
+          a.userData.vy += ny * exchange;
+          b.userData.vx -= nx * exchange;
+          b.userData.vy -= ny * exchange;
+        }
+      }
+    }
+
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  // 리사이즈
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+})();
+</script>
+
+<!-- =====================================================
+     ✨ 별빛 쏟아지는 커서 효과
+     ===================================================== -->
+<script>
+(function() {
+  const cv = document.getElementById('cursor-canvas');
+  if (!cv) return;
+  const ctx = cv.getContext('2d');
+  function resize() {
+    cv.width = window.innerWidth;
+    cv.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // 마우스 위치
+  let mx = -300, my = -300;
+  let lastMx = -300, lastMy = -300;
+  let mouseSpeed = 0;
+
+  // 별빛 파티클들
+  const stars = [];
+  // 마우스 코어 트레일
+  const trail = [];
+  const TRAIL_MAX = 14;
+
+  // 별 색상 팔레트 (스테인레스 + 골드 + 사이안 톤)
+  const STAR_COLORS = [
+    { core: 'rgba(255,255,255,1)',  glow: 'rgba(220,235,255,1)', hue: 210 }, // 화이트
+    { core: 'rgba(255,255,200,1)',  glow: 'rgba(255,220,120,1)', hue: 45  }, // 골드
+    { core: 'rgba(220,245,255,1)',  glow: 'rgba(150,220,255,1)', hue: 195 }, // 아이스블루
+    { core: 'rgba(255,230,180,1)',  glow: 'rgba(255,180,80,1)',  hue: 30  }, // 앰버
+    { core: 'rgba(240,255,255,1)',  glow: 'rgba(200,240,255,1)', hue: 180 }, // 시아니 화이트
+  ];
+
+  // 별 1개 생성 (마우스 위치에서 쏟아져 내림)
+  function spawnStar(x, y, intensity) {
+    const c = STAR_COLORS[Math.floor(Math.random() * STAR_COLORS.length)];
+    // 발사 각도: 위쪽으로 약간 흩뿌림 → 자연스럽게 떨어짐
+    const angle = (Math.PI * 0.5) + (Math.random() - 0.5) * Math.PI * 0.9; // 아래쪽 방향
+    const speed = 0.3 + Math.random() * 1.8 + intensity * 0.5;
+    stars.push({
+      x: x + (Math.random() - 0.5) * 8,
+      y: y + (Math.random() - 0.5) * 8,
+      vx: Math.cos(angle) * speed * (Math.random() - 0.5) * 1.6,  // 좌우로 흩어짐
+      vy: Math.sin(angle) * speed - 0.5,                           // 약간 위로 발사
+      r: 0.8 + Math.random() * 2.2 + intensity * 0.3,
+      life: 1.0,
+      decay: 0.008 + Math.random() * 0.012,
+      rotation: Math.random() * Math.PI * 2,
+      rotSpeed: (Math.random() - 0.5) * 0.1,
+      spikes: Math.random() < 0.6 ? 5 : 4,
+      color: c,
+      twinkle: Math.random() * Math.PI * 2,
+    });
+  }
+
+  // 5각/4각 별 그리기
+  function drawStar(cx, cy, spikes, outerR, innerR, color, alpha, rotation) {
+    if (outerR < 0.1) return;
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(rotation);
+    ctx.globalAlpha = alpha;
+    ctx.beginPath();
+    const step = Math.PI / spikes;
+    for (let i = 0; i < spikes * 2; i++) {
+      const r = i % 2 === 0 ? outerR : innerR;
+      const a = i * step - Math.PI / 2;
+      const px = Math.cos(a) * r;
+      const py = Math.sin(a) * r;
+      if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+    ctx.shadowColor = color;
+    ctx.shadowBlur = outerR * 3;
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // 마우스 이벤트
+  document.addEventListener('mousemove', e => {
+    const dx = e.clientX - mx;
+    const dy = e.clientY - my;
+    mouseSpeed = Math.sqrt(dx * dx + dy * dy);
+    lastMx = mx; lastMy = my;
+    mx = e.clientX; my = e.clientY;
+    trail.push({ x: mx, y: my, life: 1 });
+    if (trail.length > TRAIL_MAX) trail.shift();
+  });
+
+  // 클릭 시 별 폭발
+  document.addEventListener('click', e => {
+    for (let i = 0; i < 25; i++) {
+      const angle = (i / 25) * Math.PI * 2;
+      const speed = 2 + Math.random() * 4;
+      const c = STAR_COLORS[Math.floor(Math.random() * STAR_COLORS.length)];
+      stars.push({
+        x: e.clientX, y: e.clientY,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed - 1,
+        r: 1.5 + Math.random() * 2.5,
+        life: 1,
+        decay: 0.012,
+        rotation: Math.random() * Math.PI * 2,
+        rotSpeed: (Math.random() - 0.5) * 0.15,
+        spikes: 5,
+        color: c,
+        twinkle: Math.random() * Math.PI * 2,
+      });
+    }
+  });
+
+  let frame = 0;
+  function loop() {
+    requestAnimationFrame(loop);
+    frame++;
+
+    // ⚠️ 매 프레임 완전 클리어 (이전 검정 fillRect는 페이지 전체를 가렸음)
+    // 잔상 효과는 별 자체의 life 페이드로 표현
+    ctx.clearRect(0, 0, cv.width, cv.height);
+
+    // ── 트레일 (별 따라가는 빛 줄기) ──
+    if (trail.length > 1) {
+      for (let i = 0; i < trail.length - 1; i++) {
+        const p0 = trail[i], p1 = trail[i + 1];
+        const frac = (i + 1) / trail.length;
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(p0.x, p0.y);
+        ctx.lineTo(p1.x, p1.y);
+        ctx.strokeStyle = `rgba(255, 245, 200, ${frac * frac * 0.55})`;
+        ctx.lineWidth = frac * 4 + 0.5;
+        ctx.lineCap = 'round';
+        ctx.shadowColor = 'rgba(255, 220, 120, 0.7)';
+        ctx.shadowBlur = 8;
+        ctx.stroke();
+        ctx.restore();
+      }
+      // 트레일 페이드
+      trail.forEach(p => p.life *= 0.92);
+      while (trail.length > 0 && trail[0].life < 0.05) trail.shift();
+    }
+
+    // ── 별빛 자동 생성 (마우스 위치에서 쏟아짐) ──
+    // 정지 상태에서도 천천히 흘러나옴, 움직일수록 더 많이
+    const spawnCount = Math.min(8, 1 + Math.floor(mouseSpeed * 0.4));
+    for (let i = 0; i < spawnCount; i++) {
+      spawnStar(mx, my, Math.min(mouseSpeed * 0.05, 1.5));
+    }
+    mouseSpeed *= 0.85;
+
+    // ── 별 업데이트 + 그리기 ──
+    for (let i = stars.length - 1; i >= 0; i--) {
+      const s = stars[i];
+      s.x += s.vx;
+      s.y += s.vy;
+      s.vy += 0.08;       // 중력 (떨어짐)
+      s.vx *= 0.99;       // 공기저항
+      s.rotation += s.rotSpeed;
+      s.twinkle += 0.18;
+      s.life -= s.decay;
+      if (s.life <= 0 || s.y > cv.height + 30) {
+        stars.splice(i, 1);
+        continue;
+      }
+      // 깜빡임 (별 크기 변동)
+      const twk = 0.7 + Math.sin(s.twinkle) * 0.3;
+      const r = s.r * s.life * twk;
+      // 외부 발광 (바깥쪽 빛 번짐)
+      const grd = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, r * 5);
+      grd.addColorStop(0, s.color.glow.replace('1)', `${s.life * 0.4})`));
+      grd.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, r * 5, 0, Math.PI * 2);
+      ctx.fillStyle = grd;
+      ctx.fill();
+      // 별 모양 핵
+      drawStar(s.x, s.y, s.spikes, r * 2.4, r * 1.0,
+        s.color.glow, s.life * 0.85, s.rotation);
+      drawStar(s.x, s.y, s.spikes, r * 1.4, r * 0.55,
+        s.color.core, s.life, s.rotation);
+    }
+
+    // ── 메인 커서 (별 모양) ──
+    if (mx > 0) {
+      // 외부 후광
+      const haloG = ctx.createRadialGradient(mx, my, 0, mx, my, 28);
+      haloG.addColorStop(0,   'rgba(255,255,200,0.9)');
+      haloG.addColorStop(0.4, 'rgba(255,210,80,0.4)');
+      haloG.addColorStop(1,   'rgba(255,160,0,0)');
+      ctx.beginPath();
+      ctx.arc(mx, my, 28, 0, Math.PI * 2);
+      ctx.fillStyle = haloG;
+      ctx.fill();
+      // 4갈래 빛줄기 (반짝)
+      const blink = 0.7 + Math.sin(frame * 0.15) * 0.3;
+      ctx.save();
+      ctx.translate(mx, my);
+      ctx.rotate(frame * 0.01);
+      [[1,0],[0,1],[-1,0],[0,-1]].forEach(([dx, dy]) => {
+        const len = 18 + Math.sin(frame * 0.1) * 4;
+        const lg = ctx.createLinearGradient(0, 0, dx * len, dy * len);
+        lg.addColorStop(0, `rgba(255,255,220,${blink})`);
+        lg.addColorStop(1, 'rgba(255,200,80,0)');
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(dx * len, dy * len);
+        ctx.strokeStyle = lg;
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+      });
+      ctx.restore();
+      // 5각별 핵 (펄스)
+      const pulse = 1 + Math.sin(frame * 0.18) * 0.18;
+      drawStar(mx, my, 5, 11 * pulse, 5 * pulse, 'rgba(255,255,220,1)', 1, frame * 0.02);
+      drawStar(mx, my, 5, 6.5 * pulse, 2.8 * pulse, 'rgba(255,240,140,1)', 1, frame * 0.02);
+    }
+  }
+  loop();
+})();
+</script>
+
+<!-- ===== 폼 + 페이드 스크립트 ===== -->
+<script>
+  // ═══════════════════════════════════════════════════════════
+  // 📧 신청서 제출 → Web3Forms 연동 (관리자 + 신청자 자동 답장)
+  // ═══════════════════════════════════════════════════════════
+  // ⚠️ 사용 전 설정 필수:
+  //   1) https://web3forms.com 가입 후 무료 액세스키 발급
+  //   2) 아래 WEB3FORMS_KEY 값을 발급받은 키로 교체
+  //   3) Web3Forms 대시보드에서 "Auto Response" 활성화 (자동 답장용)
+  //   자세한 가이드: 메일발송_설정가이드.md
+  // ═══════════════════════════════════════════════════════════
+  const WEB3FORMS_KEY = 'YOUR_WEB3FORMS_ACCESS_KEY_HERE';
+  const ADMIN_EMAIL   = 'phjcom3@gmail.com';
+
+  async function submitForm(e) {
+    e.preventDefault();
+    const form = document.getElementById('applyForm');
+    const data = new FormData(form);
+
+    const submitBtn = form.querySelector('.form-submit');
+    const originalBtnText = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = '⏳ 전송 중...';
+
+    // ── payload 정리 (관심분야 다중선택 처리) ──
+    const payload = {};
+    data.forEach((v, k) => {
+      if (payload[k] !== undefined) payload[k] = [].concat(payload[k], v).join(', ');
+      else payload[k] = v;
+    });
+
+    // ── 관리자(phjcom3@gmail.com)에게 발송할 메일 본문 ──
+    const adminMessage =
+      '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n' +
+      '📩 새 수강 신청서가 접수되었습니다\n' +
+      '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n' +
+      '▶ 성함 : ' + (payload.name || '-') + '\n' +
+      '▶ 연락처 : ' + (payload.phone || '-') + '\n' +
+      '▶ 이메일 : ' + (payload.email || '-') + '\n' +
+      '▶ 연령대 : ' + (payload.age || '-') + '\n' +
+      '▶ 블로그 경험 : ' + (payload.experience || '-') + '\n' +
+      '▶ 관심 분야 : ' + (payload.interest || '-') + '\n' +
+      '▶ 사용 기기 : ' + (payload.device || '-') + '\n' +
+      '▶ 학습 목표 / 문의 :\n   ' + (payload.message || '-').replace(/\n/g, '\n   ') + '\n\n' +
+      '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n' +
+      '📅 접수 시각 : ' + new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }) + '\n' +
+      '🌐 출처 : Blog Master 랜딩페이지\n';
+
+    // ── Web3Forms로 보낼 데이터 ──
+    const adminPayload = {
+      access_key: WEB3FORMS_KEY,
+      subject: '[Blog Master 신청] ' + (payload.name || '익명') + ' 님의 신청서',
+      from_name: 'Auto365Blog EduTech 신청 시스템',
+      email: payload.email || ADMIN_EMAIL,   // 답장 시 신청자에게
+      name:  payload.name || '신청자',
+      message: adminMessage,
+      // Web3Forms가 신청자에게 자동 답장을 보낼 이메일 주소
+      replyto: payload.email,
+      // 봇 방지
+      botcheck: ''
+    };
+
+    try {
+      // ── 키가 설정되지 않은 개발/테스트 모드 ──
+      if (!WEB3FORMS_KEY || WEB3FORMS_KEY === 'YOUR_WEB3FORMS_ACCESS_KEY_HERE') {
+        console.warn('⚠️ Web3Forms 액세스키가 설정되지 않았습니다. 개발 모드로 진행합니다.');
+        console.log('[수강신청 데이터]', payload);
+        await new Promise(r => setTimeout(r, 800));   // 가짜 지연
+        showSuccessModal(payload.name);
+        form.reset();
+        return false;
+      }
+
+      // ── 실제 메일 발송 ──
+      const res = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(adminPayload)
+      });
+      const result = await res.json();
+
+      if (result.success) {
+        console.log('[메일 발송 성공]', result);
+        showSuccessModal(payload.name);
+        form.reset();
+      } else {
+        console.error('[메일 발송 실패]', result);
+        alert('메일 발송에 실패했습니다.\n\n사유: ' + (result.message || '알 수 없음') +
+              '\n\n잠시 후 다시 시도하시거나, 카카오톡으로 문의해 주세요.');
+      }
+    } catch (err) {
+      console.error('[네트워크 오류]', err);
+      alert('네트워크 오류로 신청이 접수되지 않았습니다.\n\n인터넷 연결을 확인하시고 다시 시도해 주세요.\n계속 문제가 있으시면 카카오톡으로 문의해 주세요.');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalBtnText;
+    }
+    return false;
+  }
+
+  // 성공 모달 표시 (개인화된 인사 포함)
+  function showSuccessModal(name) {
+    const modal = document.getElementById('modalBg');
+    const greetEl = document.getElementById('modalGreet');
+    if (greetEl && name) greetEl.textContent = name + ' 님, 신청이 접수되었습니다!';
+    modal.classList.add('show');
+  }
+  function closeModal() {
+    document.getElementById('modalBg').classList.remove('show');
+  }
+  document.getElementById('modalBg').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+
+  // ── fade-in 안전장치: 관찰자 + 강제 표시 폴백 ──
+  const fadeEls = document.querySelectorAll('.fade-in');
+  const showAll = () => fadeEls.forEach(el => el.classList.add('visible'));
+
+  // 1) 모션 비선호 사용자는 즉시 모두 표시
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    showAll();
+  } else if (!('IntersectionObserver' in window)) {
+    // 2) 구형 브라우저: 즉시 모두 표시
+    showAll();
+  } else {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.05, rootMargin: '0px 0px -10% 0px' });
+    fadeEls.forEach(el => observer.observe(el));
+
+    // 3) 폴백: 어떤 이유든 2.5초 내 표시되지 않은 요소는 강제로 표시
+    setTimeout(() => {
+      fadeEls.forEach(el => {
+        if (!el.classList.contains('visible')) el.classList.add('visible');
+      });
+    }, 2500);
+  }
+</script>
+</body>
+</html>

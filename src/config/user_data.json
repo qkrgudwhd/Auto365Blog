@@ -1,0 +1,66 @@
+{
+  "_comment": "공개 가능한 설정값만. 민감 정보(API 키 등)는 src/config/secrets.local.json 에 별도 저장.",
+  "_version": "2.1.0",
+  "_security_note": "민감 정보는 secrets.local.json (gitignore 제외) 로 분리됨. secrets.local.json.example 템플릿 참조.",
+
+  "company": {
+    "name": "한국자아실현협회",
+    "representative": "박형종",
+    "address": "경남 김해시 주촌면 선지로85",
+    "email": "phjcom3@gmail.com",
+    "brand": "Auto365Blog EduTech",
+    "brand_en": "Gimhae Centum Q"
+  },
+
+  "instructor": {
+    "name": "박형종",
+    "title": "33년 경력 베테랑 엔지니어 & 스마트AI경영 전문가",
+    "subtitle": "시니어 디지털 임파워먼트 전도사 | 'AI After Human' 저자 및 시인",
+    "company": "한국자아실현협회 | Auto365Blog EduTech",
+    "company_en": "Gimhae Centum Q",
+    "bio": "33년간 현장에서 쌓아온 엔지니어링 노하우와 최신 AI 기술을 결합하여, 누구나 인공지능으로 자신만의 블로그 수익 모델을 만들 수 있도록 돕고 있습니다.",
+    "specialties": ["스마트AI경영", "블로그 자동화", "시니어 디지털 교육", "AI 수익화 전략"]
+  },
+
+  "contact": {
+    "email": "phjcom3@gmail.com",
+    "kakao_openchat_url": "https://open.kakao.com/o/gwcemGqi",
+    "kakao_url": "https://open.kakao.com/o/gwcemGqi",
+    "naver_blog": "https://blog.naver.com/com-365/224254785153",
+    "youtube_video_id": ""
+  },
+
+  "google_auth": {
+    "_comment": "⚠️ client_id 는 secrets.local.json 에서 로드. 여기 값은 절대 사용 X.",
+    "client_id": "__LOAD_FROM_SECRETS__"
+  },
+
+  "email_service": {
+    "_comment": "⚠️ web3forms_access_key 는 secrets.local.json 에서 로드. 여기 값은 절대 사용 X.",
+    "provider": "web3forms",
+    "web3forms_access_key": "__LOAD_FROM_SECRETS__",
+    "admin_email": "phjcom3@gmail.com",
+    "subject_admin": "[Blog Master 신청] 새 신청서가 접수되었습니다",
+    "auto_reply_subject": "[Auto365Blog EduTech] 수강 신청을 받았습니다 - 감사합니다"
+  },
+
+  "enrollment": {
+    "current_batch": "2026년 6월 1기",
+    "max_students_per_batch": 20
+  },
+
+  "course": {
+    "title": "AI BLOG MASTER 자동화 과정",
+    "batch": "2026년 6월 1기",
+    "duration": "12주 완성 과정",
+    "format": "온라인 + 현장 지원",
+    "price_display": "사전 문의 후 결정"
+  },
+
+  "api_keys": {
+    "_comment": "⚠️ 모든 API 키는 secrets.local.json 에서 로드. 여기 값은 절대 사용 X.",
+    "openai_api_key": "__LOAD_FROM_SECRETS__",
+    "naver_blog_id": "__LOAD_FROM_SECRETS__",
+    "encryption_salt": "__LOAD_FROM_SECRETS__"
+  }
+}
