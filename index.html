@@ -900,19 +900,36 @@
 
   // 섹션 안 영상은 보일 때 불러와 재생하고, 벗어나면 멈춘다.
   // 자동재생을 여러 개 켜두면 휴대폰이 느려지고 데이터가 샌다.
-  var vio = new IntersectionObserver(function(es){
-    es.forEach(function(e){
-      var v = e.target;
-      if (e.isIntersecting){
-        if (!v.src && v.dataset.src){ v.src = v.dataset.src; }
-        var pr = v.play();
-        if (pr && pr.catch) pr.catch(function(){});   // 자동재생 차단은 무시
-      } else if (!v.paused) {
-        v.pause();
-      }
-    });
-  }, { threshold: 0.25 });
-  document.querySelectorAll('.vin video').forEach(function(v){ vio.observe(v); });
+  var vids = [].slice.call(document.querySelectorAll('.vin video'));
+
+  function vShow(v){
+    if (!v.getAttribute('src') && v.dataset.src){ v.src = v.dataset.src; }
+    var pr = v.play();
+    if (pr && pr.catch) pr.catch(function(){});     // 자동재생 차단은 무시
+  }
+  function vHide(v){ if (!v.paused) v.pause(); }
+  function inView(v){
+    var r = v.getBoundingClientRect();
+    return r.top < innerHeight * 0.9 && r.bottom > innerHeight * 0.1;
+  }
+  function vSweep(){ vids.forEach(function(v){ inView(v) ? vShow(v) : vHide(v); }); }
+
+  if ('IntersectionObserver' in window){
+    var vio = new IntersectionObserver(function(es){
+      es.forEach(function(e){ e.isIntersecting ? vShow(e.target) : vHide(e.target); });
+    }, { threshold: 0.25 });
+    vids.forEach(function(v){ vio.observe(v); });
+  }
+
+  // 안전망 — 관찰자가 동작하지 않는 환경에서도 영상이 나오게 한다.
+  // (구형 브라우저, 인앱 브라우저 등에서 관찰자가 조용히 안 도는 경우가 있다)
+  var vTick = null;
+  addEventListener('scroll', function(){
+    if (vTick) return;
+    vTick = setTimeout(function(){ vTick = null; vSweep(); }, 200);
+  }, { passive: true });
+  addEventListener('load', vSweep);
+  setTimeout(vSweep, 1200);
 </script>
 
 </body>
