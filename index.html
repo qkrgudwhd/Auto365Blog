@@ -94,7 +94,9 @@
   /* 섹션 안 영상 — 화면에 들어올 때만 불러오고 재생한다(휴대폰 데이터·배터리 절약) */
   .vin{border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-lg);
        margin:26px 0 8px;background:#0b1020;line-height:0}
-  .vin video{width:100%;display:block}
+  /* 영상 4개 모두 16:9. 미리 자리를 잡아두지 않으면 로드 전 150px 로 찌그러지고,
+     불러오는 순간 화면이 밀린다. */
+  .vin video{width:100%;display:block;aspect-ratio:16/9;object-fit:cover}
   .vband .cap span{font-size:20px;opacity:.9}
 
   /* ===== SECTION ===== */
