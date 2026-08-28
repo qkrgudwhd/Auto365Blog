@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>auto365blog · 멀티채널 디지털 에코시스템 설명서</title>
+<meta name="description" content="블로그 4채널 + 글로벌 SNS 8채널 + 영상 2채널, 총 14개 채널을 하나의 포스팅으로 동시 발행하는 auto365blog 자동화 구조 설명서.">
+<style>
+  :root{
+    --bg:#0b1020; --card:#ffffff; --ink:#1f2937; --muted:#6b7280;
+    --line:#e5e7eb; --brand:#6d28d9; --brand2:#2563eb; --accent:#10b981;
+    --radius:16px; --shadow:0 8px 30px rgba(17,24,39,.08);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;font-family:"Pretendard","Segoe UI",system-ui,-apple-system,sans-serif;
+       background:#f4f5fb;color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+  a{color:var(--brand2);text-decoration:none}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+
+  /* HERO */
+  .hero{background:linear-gradient(135deg,#4c1d95 0%,#6d28d9 45%,#2563eb 100%);
+        color:#fff;padding:72px 0 60px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;inset:0;
+        background:radial-gradient(900px 400px at 80% -10%,rgba(255,255,255,.18),transparent 60%)}
+  .hero .wrap{position:relative;z-index:1}
+  .eyebrow{display:inline-block;font-size:13px;letter-spacing:.12em;text-transform:uppercase;
+           background:rgba(255,255,255,.16);padding:6px 14px;border-radius:999px;font-weight:700}
+  .hero h1{font-size:42px;line-height:1.2;margin:18px 0 10px;font-weight:800}
+  .hero p{font-size:18px;opacity:.95;margin:0;max-width:760px}
+  .hero .meta{margin-top:22px;display:flex;gap:10px;flex-wrap:wrap}
+  .pill{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);
+        padding:7px 14px;border-radius:999px;font-size:14px;font-weight:600}
+  .hero .back{margin-top:22px;display:inline-block;background:#fff;color:#4c1d95;
+        padding:11px 24px;border-radius:999px;font-weight:800;font-size:15px}
+
+  /* SECTION */
+  section{padding:48px 0}
+  .sec-head{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+  .sec-head .num{width:34px;height:34px;border-radius:10px;background:var(--brand);
+        color:#fff;display:grid;place-items:center;font-weight:800;font-size:15px}
+  h2{font-size:26px;margin:0;font-weight:800}
+  .sub{color:var(--muted);margin:0 0 26px;font-size:16px}
+
+  /* CATEGORY */
+  .cat{margin:30px 0}
+  .cat-title{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:800;margin:0 0 14px}
+  .cat-title .dot{width:12px;height:12px;border-radius:50%}
+  .cat-desc{color:var(--muted);margin:-6px 0 16px;font-size:15px}
+
+  /* GRID + CARDS */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+  .card{display:flex;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);
+        border-radius:14px;padding:14px 16px;box-shadow:var(--shadow);transition:.18s;
+        text-decoration:none;color:inherit}
+  .card:hover{transform:translateY(-3px);border-color:#c7d2fe;box-shadow:0 14px 34px rgba(37,99,235,.16)}
+  .ic{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:22px;
+      flex:0 0 auto;color:#fff;font-weight:800}
+  .card b{display:block;font-size:15px}
+  .card span{display:block;color:var(--muted);font-size:12.5px;word-break:break-all}
+
+  /* PANEL */
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+         padding:24px 26px;box-shadow:var(--shadow);margin-bottom:16px}
+  .panel h3{margin:0 0 8px;font-size:18px}
+  .panel p{margin:6px 0;color:#374151}
+  .kv{display:grid;grid-template-columns:170px 1fr;gap:8px 16px;margin-top:10px}
+  .kv dt{font-weight:700;color:var(--brand)}
+  .kv dd{margin:0;color:#374151}
+
+  ul.clean{margin:8px 0 0;padding-left:18px}
+  ul.clean li{margin:6px 0}
+
+  /* 숫자 */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin:26px 0 0}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:14px;
+        padding:22px;text-align:center;box-shadow:var(--shadow)}
+  .stat .n{font-size:40px;font-weight:800;color:var(--brand);line-height:1.1}
+  .stat .l{font-size:14px;color:var(--muted);margin-top:4px}
+
+  /* DIAGRAM */
+  .diagram{background:#0b1020;color:#e5e7eb;border-radius:var(--radius);padding:26px;
+           font-family:"D2Coding","Consolas",monospace;font-size:14px;line-height:1.9;
+           overflow-x:auto;box-shadow:var(--shadow);white-space:pre}
+  .diagram .h{color:#a78bfa;font-weight:700}
+  .diagram .b{color:#60a5fa}
+  .diagram .a{color:#34d399}
+  .diagram .v{color:#f87171}
+
+  /* TAKEAWAYS */
+  .take{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+  .take .panel{margin:0;border-top:4px solid var(--accent)}
+
+  footer{background:#0b1020;color:#9ca3af;padding:34px 0;text-align:center;font-size:14px}
+  footer b{color:#fff}
+  footer a{color:#a5b4fc}
+
+  @media (max-width:640px){
+    .hero h1{font-size:30px}.kv{grid-template-columns:1fr}.diagram{font-size:12px}
+  }
+  @media print{
+    body{background:#fff}.hero{background:#4c1d95 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .card:hover{transform:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="wrap">
+    <span class="eyebrow">Multi-channel Digital Ecosystem</span>
+    <h1>auto365blog · 멀티채널 디지털 에코시스템</h1>
+    <p>박형종(hyeungjong)이 운영하는 <b>auto365blog</b> / <b>webcosmos.space</b> 브랜드의
+       블로그·SNS·영상 채널 통합 운영 현황과 구조 분석 설명서입니다.</p>
+    <div class="meta">
+      <span class="pill">🧩 14개 채널</span>
+      <span class="pill">🎬 영상까지 자동 발행</span>
+      <span class="pill">🌐 웹3·탈중앙 SNS 포함</span>
+      <span class="pill">📌 webcosmos.space</span>
+    </div>
+    <a class="back" href="index.html">← 1기 모집 페이지로 돌아가기</a>
+  </div>
+</header>
+
+<!-- 1. 채널 디렉토리 -->
+<section>
+  <div class="wrap">
+    <div class="sec-head"><div class="num">1</div><h2>채널 디렉토리</h2></div>
+    <p class="sub">역할에 따라 3개 카테고리로 분류한 전체 채널 바로가기입니다. (카드 클릭 → 새 창)</p>
+
+    <!-- ① -->
+    <div class="cat">
+      <div class="cat-title"><span class="dot" style="background:#6d28d9"></span>① 메인 콘텐츠 허브 — 블로그 &amp; 웹사이트</div>
+      <div class="cat-desc">전문 콘텐츠가 발행되는 중심 기지. 국내외 주요 블로그를 다각화.</div>
+      <div class="grid">
+        <a class="card" href="https://wordpress.com/home/webcosmos.space" target="_blank" rel="noopener">
+          <div class="ic" style="background:#1e88e5">📰</div><div><b>워드프레스</b><span>webcosmos.space · 최상위 허브</span></div></a>
+        <a class="card" href="https://blog.naver.com/com-365" target="_blank" rel="noopener">
+          <div class="ic" style="background:#03c75a">🟢</div><div><b>네이버 블로그</b><span>blog.naver.com/com-365</span></div></a>
+        <a class="card" href="https://talk1634.tistory.com/" target="_blank" rel="noopener">
+          <div class="ic" style="background:#e8540f">🟧</div><div><b>티스토리</b><span>talk1634.tistory.com</span></div></a>
+        <a class="card" href="https://phjliving.blogspot.com/" target="_blank" rel="noopener">
+          <div class="ic" style="background:#ff8000">🅖</div><div><b>구글 블로거</b><span>phjliving.blogspot.com</span></div></a>
+      </div>
+    </div>
+
+    <!-- ② -->
+    <div class="cat">
+      <div class="cat-title"><span class="dot" style="background:#2563eb"></span>② 국내외 핵심 SNS — 도달 &amp; 확산</div>
+      <div class="cat-desc">콘텐츠를 요약·전파하고 독자와 소통. 비즈니스 · 메타 계열 · 탈중앙 SNS까지 선제 확보.</div>
+      <div class="grid">
+        <a class="card" href="https://www.linkedin.com/in/%ED%98%95%EC%A2%85-%EB%B0%95-auto365blog/" target="_blank" rel="noopener">
+          <div class="ic" style="background:#0a66c2">in</div><div><b>링크드인</b><span>비즈니스 · 커리어 네트워킹</span></div></a>
+        <a class="card" href="https://www.facebook.com/profile.php?id=61573940888951" target="_blank" rel="noopener">
+          <div class="ic" style="background:#1877f2">f</div><div><b>페이스북</b><span>메타 · 대중 인지도</span></div></a>
+        <a class="card" href="https://www.instagram.com/hyeungjong" target="_blank" rel="noopener">
+          <div class="ic" style="background:linear-gradient(45deg,#f58529,#dd2a7b,#8134af)">📸</div><div><b>인스타그램</b><span>@hyeungjong · 시각 중심</span></div></a>
+        <a class="card" href="https://www.threads.com/@hyeungjong" target="_blank" rel="noopener">
+          <div class="ic" style="background:#111827">@</div><div><b>스레드</b><span>@hyeungjong · 단문 소통</span></div></a>
+        <a class="card" href="https://x.com/phjcom3" target="_blank" rel="noopener">
+          <div class="ic" style="background:#000000">𝕏</div><div><b>X (구 트위터)</b><span>@phjcom3 · 실시간 확산</span></div></a>
+        <a class="card" href="https://bsky.app/profile/auto365blog.bsky.social" target="_blank" rel="noopener">
+          <div class="ic" style="background:#0a7aff">🦋</div><div><b>블루스카이</b><span>탈중앙 SNS · 트렌드 선점</span></div></a>
+        <a class="card" href="https://mastodon.social/@auto365blog" target="_blank" rel="noopener">
+          <div class="ic" style="background:#6364ff">🐘</div><div><b>마스토돈</b><span>@auto365blog · 오픈 프로토콜</span></div></a>
+        <a class="card" href="https://www.tumblr.com/auto365blog" target="_blank" rel="noopener">
+          <div class="ic" style="background:#36465d">t</div><div><b>텀블러</b><span>auto365blog · 큐레이션</span></div></a>
+      </div>
+    </div>
+
+    <!-- ③ -->
+    <div class="cat">
+      <div class="cat-title"><span class="dot" style="background:#ef4444"></span>③ 영상 채널 — 노출 &amp; 신뢰</div>
+      <div class="cat-desc">글로 끝내지 않습니다. 같은 콘텐츠를 영상으로 만들어 함께 발행합니다.</div>
+      <div class="grid">
+        <a class="card" href="https://www.youtube.com/@auto365blog" target="_blank" rel="noopener">
+          <div class="ic" style="background:#ff0000">▶</div><div><b>유튜브</b><span>@auto365blog · 롱폼 · 쇼츠</span></div></a>
+        <a class="card" href="https://www.tiktok.com/@ai365blog" target="_blank" rel="noopener">
+          <div class="ic" style="background:linear-gradient(45deg,#25f4ee,#000,#fe2c55)">♪</div><div><b>틱톡</b><span>@ai365blog · 숏폼 확산</span></div></a>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="n">4</div><div class="l">블로그 · 웹사이트</div></div>
+      <div class="stat"><div class="n">8</div><div class="l">국내외 SNS</div></div>
+      <div class="stat"><div class="n">2</div><div class="l">영상 채널</div></div>
+      <div class="stat" style="border-color:var(--brand);background:#f5f3ff">
+        <div class="n">14</div><div class="l">전체 채널</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. 핵심 요약 -->
+<section style="background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap">
+    <div class="sec-head"><div class="num">2</div><h2>핵심 요약</h2></div>
+    <p class="sub">한 인물이 설계한 브랜드 중심의 거대한 콘텐츠 배포 네트워크.</p>
+    <div class="panel">
+      <dl class="kv">
+        <dt>핵심 인물 · 브랜드</dt><dd>박형종(hyeungjong) / auto365blog · webcosmos.space</dd>
+        <dt>구조적 특징</dt><dd>주요 블로그(네이버·티스토리·워드프레스·구글 블로거)를 중심축으로,
+          국내외 SNS와 영상 채널(유튜브·틱톡)까지 하나의 원고에서 자동 파생·발행하는 단일 콘텐츠 네트워크.</dd>
+        <dt>글 → 영상 파이프라인</dt><dd>본문에서 대본을 뽑고, 이미지·영상·음악을 생성해
+          한 편의 영상으로 묶은 뒤 유튜브·틱톡에 함께 올립니다. 글만 쓰던 채널이 영상 채널로 확장됩니다.</dd>
+        <dt>주요 목적</dt><dd>퍼스널 브랜딩 강화 · 다채널 콘텐츠 노출 극대화 · 자동화 기반 다채널 동시 관리.</dd>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<!-- 3. 채널별 상세 분석 -->
+<section>
+  <div class="wrap">
+    <div class="sec-head"><div class="num">3</div><h2>채널별 상세 분석</h2></div>
+    <p class="sub">역할에 따른 3가지 카테고리 해설.</p>
+
+    <div class="panel">
+      <h3>① 메인 콘텐츠 허브 (블로그 · 웹사이트)</h3>
+      <ul class="clean">
+        <li><b>네이버 블로그(com-365)</b> — 국내 이용자 접근성 및 검색 최적화(SEO).</li>
+        <li><b>티스토리(talk1634)</b> — 국내 IT/전문 기술 지식 · 수익형 블로그 운영.</li>
+        <li><b>구글 블로거(phjliving)</b> — 구글 검색 노출·글로벌 확장.</li>
+        <li><b>워드프레스(webcosmos.space)</b> — 독립 웹 프레젠스 확보, 개인 브랜드 최상위 허브.</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3>② 국내외 핵심 SNS (도달 · 확산)</h3>
+      <ul class="clean">
+        <li><b>비즈니스</b> — 링크드인: 전문 커리어·B2B 네트워킹.</li>
+        <li><b>글로벌 주류(메타)</b> — 페이스북·인스타그램·스레드: 대중 인지도, 시각/단문 소통.</li>
+        <li><b>실시간</b> — X(@phjcom3): 속보성 확산과 검색 유입.</li>
+        <li><b>탈중앙·대안</b> — 블루스카이·마스토돈: 웹3 트렌드 선점 / 텀블러: 자유 형식 큐레이션.</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3>③ 영상 채널 (노출 · 신뢰)</h3>
+      <ul class="clean">
+        <li><b>유튜브(@auto365blog)</b> — 검색 다음으로 큰 유입 경로. 롱폼으로 신뢰를, 쇼츠로 도달을 가져갑니다.
+            API 키 발급 등 <b>사용법 강의 영상</b>도 이 채널에 올라갑니다.</li>
+        <li><b>틱톡(@ai365blog)</b> — 팔로워가 적어도 좋은 영상이면 퍼지는 구조. 신규 유입 확보에 유리.</li>
+        <li>같은 원고에서 <b>대본 → 이미지 → 영상 → 음악</b> 순으로 만들어져 두 채널에 함께 올라갑니다.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 4. 관계도 -->
+<section style="background:#f0f1fb">
+  <div class="wrap">
+    <div class="sec-head"><div class="num">4</div><h2>데이터 기반 관계도</h2></div>
+    <p class="sub">허브 → 생산 → 확산 → 영상화의 흐름.</p>
+<div class="diagram"><span class="h">[ 최상위 웹 / 브랜드 허브 ]</span>
+        │
+        ├─► <span class="b">워드프레스 (webcosmos.space)</span>
+        │
+ <span class="h">[ 블로그 콘텐츠 생산 허브 ]</span>
+        │
+        ├─► 네이버 블로그
+        ├─► 티스토리
+        └─► 구글 블로거
+        │
+        ├──────────────────────────┬──────────────────────────┐
+        │                          │                          │
+ <span class="h">[ SNS 확산 ]</span>              <span class="v">[ 영상화 파이프라인 ]</span>      <span class="a">[ 기록 → 출판 ]</span>
+        │                          │                          │
+        ├─► 비즈니스 : 링크드인      ├─► 대본 생성              └─► <span class="a">전자책 · 종이책 (부크크)</span>
+        ├─► 메타 : 페이스북          ├─► 이미지 · 영상 생성
+        │        인스타그램          ├─► 음악 생성
+        │        스레드              │
+        ├─► 실시간 : <span class="v">X (@phjcom3)</span>   ├─► <span class="v">유튜브 (@auto365blog)</span>
+        └─► 대안 : 블루스카이        └─► <span class="v">틱톡 (@ai365blog)</span>
+                  마스토돈
+                  텀블러</div>
+  </div>
+</section>
+
+<!-- 5. 시사점 -->
+<section>
+  <div class="wrap">
+    <div class="sec-head"><div class="num">5</div><h2>시사점 &amp; 해석</h2></div>
+    <p class="sub">전문가 수준의 다채널 운영 전략.</p>
+    <div class="take">
+      <div class="panel">
+        <h3>🌐 철저한 채널 다각화</h3>
+        <p>특정 플랫폼의 정책 변화·저품질 리스크에 종속되지 않도록 네이버·구글·메타는 물론
+           신생 오픈 프로토콜(블루스카이·마스토돈)까지 아우르는 안정적 포트폴리오 구성.</p>
+      </div>
+      <div class="panel">
+        <h3>🎬 글에서 영상으로</h3>
+        <p>글만 쓰는 채널은 도달에 한계가 있습니다. 같은 원고에서 대본·이미지·영상·음악을 만들어
+           유튜브와 틱톡까지 함께 발행함으로써, 한 번의 집필이 열네 갈래로 퍼집니다.</p>
+      </div>
+      <div class="panel">
+        <h3>🏆 종합 평</h3>
+        <p>본인만의 디지털 영토를 넓고 촘촘하게 설계한 상태. 웹3·영상 자동화·다채널 마케팅 등
+           최신 디지털 트렌드 이해도가 높은 <b>전문가 수준의 다채널 운영</b> 형태.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <b>auto365blog</b> · webcosmos.space — 멀티채널 디지털 에코시스템 설명서<br>
+    <span style="opacity:.7">박형종(hyeungjong)</span><br>
+    <span style="display:inline-block;margin-top:10px">
+      <a href="index.html">← 1기 모집 페이지</a>
+      &nbsp;·&nbsp;
+      <a href="https://www.youtube.com/@auto365blog" target="_blank" rel="noopener">유튜브</a>
+      &nbsp;·&nbsp;
+      <a href="https://open.kakao.com/o/gwcemGqi" target="_blank" rel="noopener">공식 오픈채팅방</a>
+    </span>
+  </div>
+</footer>
+
+</body>
+</html>

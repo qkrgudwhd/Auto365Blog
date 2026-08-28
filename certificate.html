@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>수료증 발급 — 랜딩페이지 · 365blog · e_book_maker 1기</title>
+<style>
+ :root{--bg:#0f1420;--bg2:#161d2c;--bg3:#1e2739;--line:#2c3850;--tx:#e8edf7;--tx2:#9aa8c2;
+       --ac:#5b9dff;--ok:#7ee1a8;--wn:#ffcc66;--dn:#ff6b6b}
+ *{box-sizing:border-box;margin:0;padding:0}
+ body{background:var(--bg);color:var(--tx);font-family:"Malgun Gothic",sans-serif;
+      font-size:15px;line-height:1.7;padding:20px}
+ .wrap{max-width:940px;margin:0 auto}
+ h1{font-size:22px;margin-bottom:4px}
+ .sub{color:var(--tx2);font-size:13px;margin-bottom:18px}
+ .card{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:16px}
+ .card h2{font-size:17px;margin-bottom:12px;color:var(--ac)}
+ .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+ input{background:var(--bg3);border:1px solid var(--line);color:var(--tx);padding:9px 12px;
+       border-radius:8px;font-family:inherit;font-size:14px}
+ button{background:var(--bg3);border:1px solid var(--line);color:var(--tx2);padding:9px 16px;
+        border-radius:8px;cursor:pointer;font-family:inherit;font-size:14px}
+ button:hover{border-color:var(--ac);color:var(--tx)}
+ button.p{background:var(--ac);border-color:var(--ac);color:#06101f;font-weight:700}
+ button.g{background:var(--ok);border-color:var(--ok);color:#06101f;font-weight:700}
+ button.d{background:transparent;border-color:var(--dn);color:var(--dn)}
+ table{width:100%;border-collapse:collapse;font-size:14px;margin-top:10px}
+ th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left}
+ th{color:var(--ac);background:var(--bg3)}
+ .pill{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12px;font-weight:700}
+ .s-ok{background:rgba(126,225,168,.16);color:var(--ok)}
+ .s-no{background:rgba(255,107,107,.14);color:var(--dn)}
+ .s-wn{background:rgba(255,204,102,.16);color:var(--wn)}
+ .msg{padding:10px 14px;border-radius:8px;margin-top:10px;font-size:14px;display:none}
+ .msg.ok{background:rgba(126,225,168,.12);color:var(--ok);display:block}
+ .msg.ng{background:rgba(255,107,107,.12);color:var(--dn);display:block}
+ .note{background:rgba(255,204,102,.10);border-left:3px solid var(--wn);padding:12px 14px;
+       border-radius:8px;font-size:13px;color:var(--wn);margin-bottom:16px}
+
+ /* ===== 수료증 본체 (인쇄용 A4 가로) ===== */
+ #sheetWrap{display:none;margin-top:16px}
+ .sheet{background:#fff;color:#1a1a1a;width:100%;max-width:900px;margin:0 auto;
+        padding:52px 60px;border-radius:6px;position:relative;
+        font-family:"Batang","Malgun Gothic",serif}
+ .sheet .frame{border:3px double #8b1e2d;padding:38px 42px;min-height:520px;
+               display:flex;flex-direction:column;text-align:center}
+ .sheet .kind{font-size:15px;letter-spacing:8px;color:#8b1e2d;font-weight:700}
+ .sheet .title{font-size:46px;font-weight:800;letter-spacing:16px;margin:10px 0 6px;color:#111}
+ .sheet .no{font-size:13px;color:#666;letter-spacing:1px}
+ .sheet .who{margin-top:34px;font-size:17px;color:#444}
+ .sheet .name{font-size:38px;font-weight:800;margin:8px 0 4px;letter-spacing:6px}
+ .sheet .body{margin-top:26px;font-size:17px;line-height:2.1;color:#222}
+ .sheet .body b{color:#8b1e2d}
+ .sheet .meta{margin-top:22px;font-size:14px;color:#555;line-height:1.9}
+ .sheet .date{margin-top:auto;padding-top:26px;font-size:18px;letter-spacing:2px}
+ .sheet .org{margin-top:10px;font-size:22px;font-weight:800;letter-spacing:3px}
+ .sheet .sign{font-size:15px;color:#444;margin-top:2px}
+ .sheet .verify{position:absolute;right:60px;bottom:52px;font-size:11px;color:#888;text-align:right;line-height:1.6}
+ .sheet .stamp{position:absolute;right:74px;bottom:96px;width:82px;height:82px;border:2px solid #c0392b;
+               border-radius:50%;color:#c0392b;display:grid;place-items:center;
+               font-size:12px;font-weight:800;line-height:1.3;opacity:.85;transform:rotate(-8deg)}
+
+ @media print{
+   body{background:#fff;padding:0}
+   .wrap > *:not(#sheetWrap){display:none !important}
+   #sheetWrap{display:block !important;margin:0}
+   .sheet{max-width:none;border-radius:0;padding:34px 40px}
+   .noprint{display:none !important}
+   @page{size:A4 landscape;margin:10mm}
+ }
+</style>
+</head>
+<body><div class="wrap">
+<h1>수료증 발급 · 관리자용</h1>
+<div class="sub">랜딩페이지 · 365blog · e_book_maker 1기 &nbsp;|&nbsp; <span id="mode"></span></div>
+
+<div class="note">
+  <b>수료증은 자격증이 아닙니다.</b> "이 과정을 이수했다"는 확인서입니다.
+  국가공인 · 자격 취득 같은 표현을 쓰면 자격기본법 문제가 됩니다.
+  주민번호 · 생년월일은 넣지 않습니다.
+</div>
+
+<div class="card">
+  <h2>1. 수료 대상자 (6회 x 80% = 4.8점 이상)</h2>
+  <div class="row">
+    <button onclick="render()">새로고침</button>
+    <button class="g" onclick="issueAll()">조건 충족자 일괄 발급</button>
+    <span id="cnt" style="color:var(--tx2);font-size:13px"></span>
+  </div>
+  <table id="tbl"><thead><tr>
+    <th>이름</th><th>출석 점수</th><th>완전 출석</th><th>판정</th><th>발급번호</th><th>발급</th>
+  </tr></thead><tbody></tbody></table>
+  <div class="msg" id="m1"></div>
+</div>
+
+<div class="card">
+  <h2>2. 진위 확인</h2>
+  <div class="row">
+    <input id="vNo" placeholder="발급번호 (HK-2026-1기-001)" style="width:230px">
+    <input id="vTk" placeholder="확인코드" style="width:150px">
+    <button class="p" onclick="doVerify()">확인</button>
+  </div>
+  <div class="msg" id="m2"></div>
+</div>
+
+<div id="sheetWrap">
+  <div class="row noprint" style="margin-bottom:12px">
+    <button class="p" onclick="window.print()">인쇄 / PDF 저장</button>
+    <button onclick="closeSheet()">닫기</button>
+    <span style="color:var(--tx2);font-size:13px">인쇄 대화상자에서 <b>대상을 "PDF로 저장"</b> 으로 바꾸시면 파일이 됩니다</span>
+  </div>
+  <div class="sheet" id="sheet"></div>
+</div>
+</div>
+
+<script>
+/* ============================================================
+   출석 엔진 — 랜딩페이지·365blog·e_book_maker 1기
+
+   저장소를 어댑터로 분리했다.
+   지금은 localStorage, Firebase 키를 받으면 Store 만 교체하면 된다.
+
+   판정 규칙
+     A(시작) + B(종료) 둘 다 → 1.0점 (출석)
+     하나만                  → 0.5점 (부분)
+     없음                    → 0.0점 (결석)
+     수료 = 6회 × 80% = 4.8점 이상
+   ============================================================ */
+(function (global) {
+  'use strict';
+
+  const KEY = 'att_db_v1';
+  const WEEKS = 6;
+  const PASS_RATE = 0.8;
+  const PASS_SCORE = WEEKS * PASS_RATE;      // 4.8
+  const CODE_TTL_MIN = 10;                   // 코드 유효 10분
+
+  // ---------- 저장소 어댑터 ----------
+  // localStorage 가 막힌 환경(시크릿 모드 · data: URL · 일부 사내망)에서도
+  // 메모리로 계속 동작하게 한다. Firebase 로 갈 때 이 객체만 교체하면 된다.
+  let _mem = null;
+  let _useMem = false;
+
+  function canLS() {
+    try {
+      const k = '__t' + Date.now();
+      localStorage.setItem(k, '1'); localStorage.removeItem(k);
+      return true;
+    } catch (e) { return false; }
+  }
+
+  const Store = {
+    mode() { return _useMem ? 'memory' : 'localStorage'; },
+    load() {
+      if (!_useMem && !canLS()) _useMem = true;
+      if (_useMem) return _mem ? JSON.parse(JSON.stringify(_mem)) : blank();
+      try { return JSON.parse(localStorage.getItem(KEY)) || blank(); }
+      catch (e) { _useMem = true; return blank(); }
+    },
+    save(db) {
+      // 규칙이 네 필드를 모두 검사하므로 빠진 것을 채워서 저장한다
+      db.codes = db.codes || [];
+      db.attendance = db.attendance || [];
+      db.students = db.students || [];
+      db.certificates = db.certificates || [];
+      if (_useMem) { _mem = JSON.parse(JSON.stringify(db)); return; }
+      try { localStorage.setItem(KEY, JSON.stringify(db)); }
+      catch (e) { _useMem = true; _mem = JSON.parse(JSON.stringify(db)); }
+    },
+    reset() {
+      _mem = null;
+      if (_useMem) return;
+      try { localStorage.removeItem(KEY); } catch (e) { _useMem = true; }
+    }
+  };
+  // 네 필드는 항상 존재해야 한다.
+  // 보안 규칙이 각 필드 크기를 검사하는데, 필드가 없으면 오류로 '거부'된다.
+  function blank() { return { codes: [], attendance: [], students: [], certificates: [] }; }
+
+  // ---------- 유틸 ----------
+  function now() { return Date.now(); }
+  function pad4(n) { return String(n).padStart(4, '0'); }
+
+  /** 읽기 쉬운 4자리 숫자. 0000/1111 같이 헷갈리는 건 피한다. */
+  function makeCode() {
+    let c;
+    do { c = pad4(Math.floor(Math.random() * 10000)); }
+    while (/^(\d)\1{3}$/.test(c));
+    return c;
+  }
+
+  // ---------- 강사: 코드 발급 ----------
+  /**
+   * @param {number} week 1~6
+   * @param {'A'|'B'} type A=시작 확인, B=종료 확인
+   * @param {number} [ttlMin]
+   */
+  function issueCode(week, type, ttlMin) {
+    if (!(week >= 1 && week <= WEEKS)) throw new Error('회차는 1~6 입니다');
+    if (type !== 'A' && type !== 'B') throw new Error('코드 종류는 A 또는 B 입니다');
+    const db = Store.load();
+    // 같은 회차·종류의 이전 코드는 즉시 만료 (중복 유효 방지)
+    db.codes.forEach(c => {
+      if (c.week === week && c.type === type) c.expires_at = now() - 1;
+    });
+    const code = {
+      code: makeCode(),
+      week, type,
+      issued_at: now(),
+      expires_at: now() + (ttlMin || CODE_TTL_MIN) * 60000
+    };
+    db.codes.push(code);
+    Store.save(db);
+    return code;
+  }
+
+  // ---------- 수강생: 출석 찍기 ----------
+  /**
+   * @returns {{ok:boolean, reason?:string, week?:number, type?:string}}
+   */
+  function mark(userId, codeStr, opt) {
+    opt = opt || {};
+    if (!userId) return { ok: false, reason: 'NOT_LOGGED_IN' };
+    const db = Store.load();
+    const c = db.codes.find(x => x.code === String(codeStr).trim());
+    if (!c) return { ok: false, reason: 'BAD_CODE' };
+    if (now() > c.expires_at) return { ok: false, reason: 'EXPIRED' };
+
+    const dup = db.attendance.find(
+      a => a.user_id === userId && a.week === c.week && a.type === c.type);
+    if (dup) return { ok: false, reason: 'ALREADY', week: c.week, type: c.type };
+
+    db.attendance.push({
+      user_id: userId, week: c.week, type: c.type,
+      marked_at: now(), method: opt.method || 'code'
+    });
+    Store.save(db);
+    return { ok: true, week: c.week, type: c.type };
+  }
+
+  // ---------- 강사: 손으로 출석 넣기 ----------
+  function markManual(userId, week, type, memo) {
+    if (!userId) throw new Error('수강생을 고르세요');
+    const db = Store.load();
+    const dup = db.attendance.find(
+      a => a.user_id === userId && a.week === week && a.type === type);
+    if (dup) return { ok: false, reason: 'ALREADY' };
+    db.attendance.push({
+      user_id: userId, week, type,
+      marked_at: now(), method: 'manual', memo: memo || ''
+    });
+    Store.save(db);
+    return { ok: true };
+  }
+
+  // ---------- 집계 ----------
+  /** 한 사람의 회차별 점수와 총점 */
+  function scoreOf(userId) {
+    const db = Store.load();
+    const mine = db.attendance.filter(a => a.user_id === userId);
+    const weeks = [];
+    let total = 0;
+    for (let w = 1; w <= WEEKS; w++) {
+      const hasA = mine.some(a => a.week === w && a.type === 'A');
+      const hasB = mine.some(a => a.week === w && a.type === 'B');
+      const s = (hasA && hasB) ? 1 : (hasA || hasB) ? 0.5 : 0;
+      weeks.push({ week: w, A: hasA, B: hasB, score: s,
+                   label: s === 1 ? '출석' : s === 0.5 ? '부분' : '결석' });
+      total += s;
+    }
+    return {
+      user_id: userId, weeks, total,
+      rate: total / WEEKS,
+      passed: total >= PASS_SCORE,
+      need: Math.max(0, +(PASS_SCORE - total).toFixed(1))
+    };
+  }
+
+  /** 특정 회차의 실시간 현황 */
+  function sessionStatus(week, userIds) {
+    const db = Store.load();
+    return (userIds || []).map(u => {
+      const hasA = db.attendance.some(a => a.user_id === u && a.week === week && a.type === 'A');
+      const hasB = db.attendance.some(a => a.user_id === u && a.week === week && a.type === 'B');
+      return { user_id: u, A: hasA, B: hasB,
+               state: (hasA && hasB) ? 'done' : (hasA || hasB) ? 'partial' : 'none' };
+    });
+  }
+
+  /** 수료 대상자 */
+  function certifiable(userIds) {
+    return (userIds || []).map(scoreOf).filter(s => s.passed);
+  }
+
+  /** 2회 연속 결석 — 이탈 위험 신호 */
+  function atRisk(userIds, upToWeek) {
+    const out = [];
+    (userIds || []).forEach(u => {
+      const s = scoreOf(u);
+      for (let w = 2; w <= (upToWeek || WEEKS); w++) {
+        if (s.weeks[w - 1].score === 0 && s.weeks[w - 2].score === 0) {
+          out.push({ user_id: u, weeks: [w - 1, w] });
+          break;
+        }
+      }
+    });
+    return out;
+  }
+
+  // ---------- 출석 링크 (온라인 강의 주력) ----------
+  function attendUrl(base, code) {
+    return base + '?c=' + encodeURIComponent(code);
+  }
+  function codeFromUrl(search) {
+    const m = /[?&]c=([^&]+)/.exec(search || '');
+    return m ? decodeURIComponent(m[1]) : null;
+  }
+
+  // ---------- 수료증 ----------
+  // 주의: 수료증은 '이 과정을 들었다'는 확인서다. 자격증이 아니다.
+  //       국가공인·자격 취득 같은 표현을 쓰면 자격기본법 문제가 된다.
+  const CERT_PREFIX = 'HK-2026-1기-';
+
+  function makeToken() {
+    let s = '';
+    const c = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';   // 헷갈리는 0·O·1·I 제외
+    for (let i = 0; i < 10; i++) s += c[Math.floor(Math.random() * c.length)];
+    return s;
+  }
+
+  /** 수료 조건을 만족하면 수료증을 발급한다. 이미 있으면 그대로 돌려준다. */
+  function issueCertificate(userId) {
+    const db = Store.load();
+    db.certificates = db.certificates || [];
+    const has = db.certificates.find(c => c.user_id === userId);
+    if (has) return { ok: true, already: true, cert: has };
+
+    const s = scoreOf(userId);
+    if (!s.passed) {
+      return { ok: false, reason: 'NOT_QUALIFIED', total: s.total, need: s.need };
+    }
+    const seq = db.certificates.length + 1;
+    const cert = {
+      user_id: userId,
+      cert_no: CERT_PREFIX + String(seq).padStart(3, '0'),
+      verify_token: makeToken(),
+      attend_score: s.total,
+      attend_weeks: s.weeks.filter(w => w.score > 0).length,
+      full_weeks: s.weeks.filter(w => w.score === 1).length,
+      perfect: s.total === WEEKS,
+      issued_at: now()
+    };
+    db.certificates.push(cert);
+    Store.save(db);
+    return { ok: true, already: false, cert };
+  }
+
+  function listCertificates() {
+    return (Store.load().certificates || []).slice();
+  }
+
+  /** 진위 확인 — 발급번호 + 토큰이 맞아야 한다 */
+  function verifyCertificate(certNo, token) {
+    const c = (Store.load().certificates || [])
+      .find(x => x.cert_no === String(certNo).trim());
+    if (!c) return { ok: false, reason: 'NOT_FOUND' };
+    if (c.verify_token !== String(token).trim().toUpperCase()) {
+      return { ok: false, reason: 'BAD_TOKEN' };
+    }
+    return { ok: true, cert: c };
+  }
+
+  function revokeCertificate(certNo) {
+    const db = Store.load();
+    db.certificates = (db.certificates || []).filter(c => c.cert_no !== certNo);
+    Store.save(db);
+    return { ok: true };
+  }
+
+  global.Attendance = {
+    WEEKS, PASS_SCORE, CODE_TTL_MIN,
+    Store, issueCode, mark, markManual,
+    scoreOf, sessionStatus, certifiable, atRisk,
+    issueCertificate, listCertificates, verifyCertificate, revokeCertificate,
+    attendUrl, codeFromUrl,
+    _makeCode: makeCode
+  };
+})(window);
+
+</script>
+<script>
+/* ============================================================
+   Firebase 저장소 어댑터
+
+   attendance.js 의 Store 를 이것으로 갈아끼우면
+   여러 사람의 기록이 한곳(Firestore)에 모인다.
+
+   쓰는 법
+     1) 아래 firebaseConfig 에 별님 설정값을 붙여넣는다
+     2) 페이지에서 이 파일을 attendance.js 보다 "먼저" 불러온다
+     3) await AttendanceFirebase.connect()  → 연결되면 Store 자동 교체
+
+   설계 원칙
+     - attendance.js 의 로직은 한 줄도 안 고친다
+     - 연결 실패하면 기존 localStorage 로 자동 폴백 (수업이 멈추면 안 됨)
+   ============================================================ */
+(function (global) {
+  'use strict';
+
+  // ── ① 여기에 별님 설정값을 붙여넣으세요 ───────────────────
+  const firebaseConfig = {
+    apiKey:            "AIzaSyDb0d-nwXgNyx5s8MycT2QGbW9pRZDlnvg",
+    authDomain:        "gen-lang-client-0074040813.firebaseapp.com",
+    projectId:         "gen-lang-client-0074040813",
+    storageBucket:     "gen-lang-client-0074040813.firebasestorage.app",
+    messagingSenderId: "542737958820",
+    appId:             "1:542737958820:web:d71f5d77b1c6cc650c2331"
+  };
+
+  // 이 강의 한 기수의 문서 하나에 전부 담는다.
+  // 20명 × 6주 = 수백 건이라 문서 하나(1MB 한도)로 충분하고,
+  // 읽기/쓰기 횟수가 줄어 무료 티어를 거의 안 쓴다.
+  const DOC_PATH = ['courses', '2026-1기'];
+
+  const SDK = 'https://www.gstatic.com/firebasejs/10.12.2/';
+
+  let db = null, ref = null, cache = null, ready = false;
+
+  function configured() {
+    return !String(firebaseConfig.projectId).includes('〔');
+  }
+
+  function blank() { return { codes: [], attendance: [], students: [], certificates: [] }; }
+
+  /** 연결. 실패하면 false 를 돌려주고 기존 저장소를 그대로 쓴다. */
+  async function connect() {
+    if (!configured()) {
+      console.warn('[Firebase] 설정값이 아직 비어 있습니다. localStorage 로 계속합니다.');
+      return false;
+    }
+    try {
+      const [{ initializeApp }, fs, au] = await Promise.all([
+        import(SDK + 'firebase-app.js'),
+        import(SDK + 'firebase-firestore.js'),
+        import(SDK + 'firebase-auth.js')
+      ]);
+      const app = initializeApp(firebaseConfig);
+
+      // 익명 로그인 — 보안 규칙에서 '인증된 사람만' 조건을 걸기 위해 필요하다.
+      // 수강생은 로그인 화면을 볼 일이 없다. 페이지를 열면 자동으로 처리된다.
+      const auth = au.getAuth(app);
+      await new Promise(function (resolve, reject) {
+        au.onAuthStateChanged(auth, function (u) {
+          if (u) return resolve(u);
+          au.signInAnonymously(auth).then(resolve).catch(reject);
+        });
+      });
+
+      db = fs.getFirestore(app);
+      ref = fs.doc(db, DOC_PATH[0], DOC_PATH[1]);
+
+      const snap = await fs.getDoc(ref);
+      cache = snap.exists() ? snap.data() : blank();
+      if (!snap.exists()) await fs.setDoc(ref, cache);
+
+      // 다른 사람이 출석하면 강사 화면이 자동으로 갱신된다
+      fs.onSnapshot(ref, function (s) {
+        if (!s.exists()) return;
+        cache = s.data();
+        if (typeof global.onAttendanceChange === 'function') {
+          try { global.onAttendanceChange(cache); } catch (e) {}
+        }
+      });
+
+      // ── Store 교체 ──
+      const A = global.Attendance;
+      if (!A) throw new Error('attendance.js 를 먼저 불러와야 합니다');
+      A.Store.mode = function () { return 'firebase'; };
+      A.Store.load = function () { return JSON.parse(JSON.stringify(cache || blank())); };
+      A.Store.save = function (data) {
+        // 보안 규칙이 네 필드를 모두 검사한다. 하나라도 없으면 쓰기가 거부된다.
+        data.codes = data.codes || [];
+        data.attendance = data.attendance || [];
+        data.students = data.students || [];
+        data.certificates = data.certificates || [];
+        cache = JSON.parse(JSON.stringify(data));
+        fs.setDoc(ref, cache).catch(function (e) {
+          console.error('[Firebase] 저장 실패 — 화면에는 반영되었으나 서버에 안 갔습니다', e);
+          if (typeof global.onAttendanceSaveError === 'function') global.onAttendanceSaveError(e);
+        });
+      };
+      A.Store.reset = function () {
+        cache = blank();
+        return fs.setDoc(ref, cache);
+      };
+
+      ready = true;
+      console.log('[Firebase] 연결됨 —', firebaseConfig.projectId);
+      return true;
+    } catch (e) {
+      var hint = '';
+      var code = (e && (e.code || e.message)) || '';
+      if (/permission|insufficient/i.test(code)) {
+        hint = ' → 보안 규칙을 아직 안 넣으셨습니다. 콘솔 Firestore → 규칙 에 붙여넣으세요.';
+      } else if (/admin-restricted|operation-not-allowed/i.test(code)) {
+        hint = ' → Authentication 에서 "익명" 로그인을 켜셔야 합니다.';
+      } else if (/network|unavailable/i.test(code)) {
+        hint = ' → 인터넷 연결을 확인하세요.';
+      }
+      console.error('[Firebase] 연결 실패. localStorage 로 계속합니다.' + hint, e);
+      global.__fbError = code + hint;
+      return false;
+    }
+  }
+
+  global.AttendanceFirebase = {
+    connect: connect,
+    isReady: function () { return ready; },
+    isConfigured: configured,
+    config: firebaseConfig,
+    docPath: DOC_PATH.join('/')
+  };
+})(window);
+
+</script>
+<script>
+var A = window.Attendance;
+var COURSE = '랜딩페이지 · 365blog · e_book_maker 1기';
+var PERIOD = '2026년 8월 30일 ~ 2026년 10월 4일 (6주 · 12시간)';
+var ORG    = '한결솔루션';
+var CEO    = '대표 박형종';
+
+function init(){
+  document.getElementById('mode').textContent = '저장소: ' + A.Store.mode();
+  render();
+}
+function msg(id, text, ok){
+  var e=document.getElementById(id);
+  e.className='msg '+(ok?'ok':'ng'); e.textContent=text;
+  setTimeout(function(){ e.className='msg'; }, 5000);
+}
+function students(){ return A.Store.load().students || []; }
+function certOf(u){
+  var list = A.listCertificates();
+  for (var i=0;i<list.length;i++) if (list[i].user_id===u) return list[i];
+  return null;
+}
+
+function render(){
+  var st = students();
+  var tb = document.querySelector('#tbl tbody'); tb.innerHTML='';
+  var okN = 0, issued = 0;
+  st.forEach(function(u){
+    var s = A.scoreOf(u), c = certOf(u);
+    if (s.passed) okN++;
+    if (c) issued++;
+    var full = s.weeks.filter(function(w){ return w.score===1; }).length;
+    var tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td>'+u+'</td>'
+      + '<td><b>'+s.total.toFixed(1)+'</b> / 6.0</td>'
+      + '<td>'+full+'회</td>'
+      + '<td>' + (s.passed
+          ? '<span class="pill s-ok">'+(s.total===6?'개근':'수료')+'</span>'
+          : '<span class="pill s-no">'+s.need.toFixed(1)+'점 부족</span>') + '</td>'
+      + '<td>' + (c ? '<span class="pill s-wn">'+c.cert_no+'</span>' : '-') + '</td>'
+      + '<td></td>';
+    var cell = tr.lastChild;
+    if (s.passed){
+      var b1 = document.createElement('button');
+      b1.className='p'; b1.textContent = c ? '다시 보기' : '발급';
+      b1.onclick = (function(x){ return function(){ issueOne(x); }; })(u);
+      cell.appendChild(b1);
+    }
+    if (c){
+      var b2 = document.createElement('button');
+      b2.className='d'; b2.textContent='취소'; b2.style.marginLeft='6px';
+      b2.onclick = (function(x){ return function(){ revoke(x); }; })(c.cert_no);
+      cell.appendChild(b2);
+    }
+    tb.appendChild(tr);
+  });
+  document.getElementById('cnt').innerHTML =
+    '수강생 '+st.length+'명 &nbsp;·&nbsp; 수료 대상 <b style="color:var(--ok)">'+okN+'</b>명'
+    + ' &nbsp;·&nbsp; 발급 완료 <b style="color:var(--ac)">'+issued+'</b>명';
+}
+
+function issueOne(u){
+  var r = A.issueCertificate(u);
+  if (!r.ok){
+    msg('m1', u+'님은 아직 수료 조건에 못 미칩니다 (현재 '+r.total.toFixed(1)+'점, '+r.need.toFixed(1)+'점 부족)', false);
+    return;
+  }
+  msg('m1', u+'님 수료증 ' + (r.already?'(이미 발급됨) ':'발급 완료 ') + r.cert.cert_no, true);
+  render();
+  showSheet(r.cert);
+}
+function issueAll(){
+  var st = students(), n=0, skip=0;
+  st.forEach(function(u){
+    var r = A.issueCertificate(u);
+    if (r.ok && !r.already) n++;
+    else if (!r.ok) skip++;
+  });
+  msg('m1', '새로 발급 '+n+'건 · 조건 미달 '+skip+'건', true);
+  render();
+}
+function revoke(no){
+  if(!confirm(no+' 수료증을 취소합니다. 계속할까요?')) return;
+  A.revokeCertificate(no); render();
+  msg('m1', no+' 취소되었습니다', true);
+}
+function doVerify(){
+  var r = A.verifyCertificate(document.getElementById('vNo').value,
+                              document.getElementById('vTk').value);
+  if (r.ok){
+    msg('m2', '정상 발급된 수료증입니다 — '+r.cert.user_id+'님 · 출석 '+r.cert.attend_score.toFixed(1)+'점', true);
+    showSheet(r.cert);
+  } else {
+    msg('m2', r.reason==='NOT_FOUND' ? '해당 발급번호가 없습니다' : '확인코드가 맞지 않습니다', false);
+  }
+}
+function fmtDate(ms){
+  var d = new Date(ms);
+  return d.getFullYear()+'년 '+(d.getMonth()+1)+'월 '+d.getDate()+'일';
+}
+function showSheet(c){
+  // 문서 종류는 항상 '수료증' 하나로 유지한다.
+  // 개근은 별도 문서가 아니라 수료증 안의 표기로만 남긴다.
+  var perfectMark = c.perfect
+    ? '<div style="margin-top:10px;font-size:15px;color:#8b1e2d;letter-spacing:3px">전 회차 개근</div>'
+    : '';
+  document.getElementById('sheet').innerHTML =
+    '<div class="frame">'
+    + '<div class="kind">CERTIFICATE OF COMPLETION</div>'
+    + '<div class="title">수 료 증</div>'
+    + '<div class="no">'+c.cert_no+'</div>'
+    + perfectMark
+    + '<div class="who">성명</div>'
+    + '<div class="name">'+c.user_id+'</div>'
+    + '<div class="body">위 사람은 <b>'+COURSE+'</b> 과정을<br>'
+    + '성실히 이수하였으므로 이에 수료증을 수여합니다.</div>'
+    + '<div class="meta">교육 기간 · '+PERIOD+'<br>'
+    + '출석 · 6회 중 '+c.full_weeks+'회 완전 출석 (환산 '+c.attend_score.toFixed(1)+'점 / 수료 기준 4.8점)</div>'
+    + '<div class="date">'+fmtDate(c.issued_at)+'</div>'
+    + '<div class="org">'+ORG+'</div>'
+    + '<div class="sign">'+CEO+'</div>'
+    + '</div>'
+    + '<div class="stamp">한결<br>솔루션</div>'
+    + '<div class="verify">발급번호 '+c.cert_no+'<br>확인코드 '+c.verify_token+'</div>';
+  document.getElementById('sheetWrap').style.display='block';
+  document.getElementById('sheetWrap').scrollIntoView({behavior:'smooth'});
+}
+function closeSheet(){ document.getElementById('sheetWrap').style.display='none'; }
+
+document.addEventListener('DOMContentLoaded', function(){
+  var go = function(){ init(); };
+  if (window.AttendanceFirebase) {
+    window.AttendanceFirebase.connect().then(go).catch(go);
+  } else { go(); }
+});
+window.__C__ = { render:render, issueOne:issueOne, issueAll:issueAll,
+                 showSheet:showSheet, doVerify:doVerify, students:students, certOf:certOf };
+</script>
+</body></html>
