@@ -1,0 +1,545 @@
+/* Auto365Blog 1GI VIP — 12주 강의안 공통 스타일 */
+/* 노안 친화 큰 글자 (Auto365Blog 랜딩 페이지 기준) */
+/* 본문 23px · line-height 1.75 · 한글 폰트 fallback */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Pretendard', 'Noto Sans KR', -apple-system, BlinkMacSystemFont,
+    'Malgun Gothic', '맑은 고딕', sans-serif;
+  font-size: 23px;
+  line-height: 1.75;
+  color: #1a202c;
+  background: #f7fafc;
+  padding: 0;
+  word-break: keep-all;
+}
+
+/* ─── 레이아웃 ──────────────────────────────────────────── */
+.lecture-container {
+  max-width: 960px;
+  margin: 0 auto;
+  background: #ffffff;
+  min-height: 100vh;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.06);
+}
+
+/* ─── 헤더 ──────────────────────────────────────────────── */
+.lecture-header {
+  background: linear-gradient(135deg, #2c5282 0%, #2b6cb0 100%);
+  color: #ffffff;
+  padding: 56px 48px 48px;
+  position: relative;
+}
+
+.lecture-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background: linear-gradient(90deg, #ed8936 0%, #f6ad55 50%, #fbd38d 100%);
+}
+
+.week-badge {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.22);
+  color: #fbd38d;
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  padding: 8px 18px;
+  border-radius: 999px;
+  margin-bottom: 22px;
+}
+
+.lecture-header h1 {
+  font-size: 52px;
+  font-weight: 800;
+  line-height: 1.3;
+  margin-bottom: 12px;
+  letter-spacing: -0.01em;
+}
+
+.lecture-header .subtitle {
+  font-size: 27px;
+  color: #cbd5e0;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.breadcrumb {
+  margin-top: 26px;
+  font-size: 22px;
+}
+
+.breadcrumb a {
+  color: #fbd38d;
+  text-decoration: none;
+  border-bottom: 1px dotted #fbd38d;
+  font-weight: 700;
+}
+
+.breadcrumb a:hover {
+  color: #ffffff;
+  border-bottom-color: #ffffff;
+}
+
+/* ─── 본문 ──────────────────────────────────────────────── */
+.lecture-content {
+  padding: 48px 48px 72px;
+}
+
+.lecture-content h2 {
+  font-size: 40px;
+  font-weight: 800;
+  color: #2c5282;
+  margin: 48px 0 20px;
+  padding-left: 18px;
+  border-left: 7px solid #ed8936;
+  line-height: 1.35;
+}
+
+.lecture-content h2:first-child {
+  margin-top: 0;
+}
+
+.lecture-content h2 span {
+  font-size: 22px !important;
+}
+
+.lecture-content h3 {
+  font-size: 30px;
+  font-weight: 800;
+  color: #2b6cb0;
+  margin: 36px 0 16px;
+  padding: 12px 0 12px 18px;
+  background: #ebf8ff;
+  border-radius: 6px;
+  line-height: 1.4;
+}
+
+.lecture-content h4 {
+  font-size: 26px;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 24px 0 12px;
+  line-height: 1.4;
+}
+
+.lecture-content p {
+  margin: 16px 0;
+  color: #2d3748;
+  font-size: 23px;
+  line-height: 1.75;
+}
+
+.lecture-content ul,
+.lecture-content ol {
+  margin: 14px 0 20px;
+  padding-left: 34px;
+}
+
+.lecture-content li {
+  margin: 10px 0;
+  color: #2d3748;
+  font-size: 23px;
+  line-height: 1.7;
+}
+
+.lecture-content li > ul,
+.lecture-content li > ol {
+  margin: 6px 0 6px;
+}
+
+.lecture-content strong {
+  color: #c05621;
+  font-weight: 800;
+}
+
+.lecture-content em {
+  color: #2b6cb0;
+  font-style: italic;
+}
+
+.lecture-content code {
+  background: #edf2f7;
+  color: #c05621;
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-family: 'D2Coding', 'Consolas', 'Monaco', monospace;
+  font-size: 21px;
+  font-weight: 600;
+}
+
+.lecture-content pre {
+  background: #2d3748;
+  color: #e2e8f0;
+  padding: 20px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 18px 0;
+  font-family: 'D2Coding', 'Consolas', 'Monaco', monospace;
+  font-size: 21px;
+  line-height: 1.6;
+}
+
+.lecture-content pre code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+  font-size: inherit;
+}
+
+.lecture-content blockquote {
+  background: #fffaf0;
+  border-left: 5px solid #ed8936;
+  padding: 18px 22px;
+  margin: 20px 0;
+  border-radius: 0 6px 6px 0;
+  color: #744210;
+  font-style: italic;
+  font-size: 23px;
+  line-height: 1.7;
+}
+
+.lecture-content a {
+  color: #2b6cb0;
+  text-decoration: underline;
+  text-decoration-color: #bee3f8;
+  text-underline-offset: 4px;
+  font-weight: 600;
+}
+
+.lecture-content a:hover {
+  color: #2c5282;
+  text-decoration-color: currentColor;
+}
+
+.lecture-content hr {
+  border: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #cbd5e0, transparent);
+  margin: 40px 0;
+}
+
+/* 인용 배지 [cite: N] */
+.cite {
+  display: inline-block;
+  background: #e6fffa;
+  color: #2c7a7b;
+  font-size: 16px;
+  padding: 2px 8px;
+  border-radius: 5px;
+  margin-left: 6px;
+  vertical-align: super;
+  font-weight: 600;
+}
+
+/* ─── 강조 박스 (학습 목표 / 과제 / 핵심 지휘) ─────────── */
+.box-objective {
+  background: linear-gradient(135deg, #ebf8ff 0%, #e6fffa 100%);
+  border: 1px solid #bee3f8;
+  border-left: 7px solid #3182ce;
+  padding: 26px 30px;
+  border-radius: 10px;
+  margin: 24px 0;
+}
+
+.box-objective h3 {
+  background: transparent;
+  padding: 0;
+  margin: 0 0 14px;
+  color: #2c5282;
+  font-size: 30px;
+}
+
+.box-objective p,
+.box-objective li {
+  font-size: 23px;
+  line-height: 1.75;
+}
+
+.box-task {
+  background: linear-gradient(135deg, #fffaf0 0%, #fff5f5 100%);
+  border: 1px solid #fbd38d;
+  border-left: 7px solid #ed8936;
+  padding: 26px 30px;
+  border-radius: 10px;
+  margin: 30px 0;
+}
+
+.box-task h3 {
+  background: transparent;
+  padding: 0;
+  margin: 0 0 14px;
+  color: #c05621;
+  font-size: 30px;
+}
+
+.box-task p,
+.box-task li {
+  font-size: 23px;
+  line-height: 1.75;
+}
+
+.box-tip {
+  background: #faf5ff;
+  border: 1px solid #d6bcfa;
+  border-left: 7px solid #805ad5;
+  padding: 22px 28px;
+  border-radius: 10px;
+  margin: 24px 0;
+  color: #44337a;
+}
+
+.box-tip h3,
+.box-tip h4 {
+  background: transparent;
+  padding: 0;
+  margin: 0 0 10px;
+  color: #553c9a;
+  font-size: 28px;
+}
+
+.box-tip p,
+.box-tip li {
+  font-size: 23px;
+  line-height: 1.75;
+}
+
+/* ─── 푸터 ──────────────────────────────────────────────── */
+.lecture-footer {
+  background: #2d3748;
+  color: #cbd5e0;
+  padding: 28px 48px;
+  text-align: center;
+  font-size: 21px;
+  line-height: 1.7;
+}
+
+.lecture-footer a {
+  color: #fbd38d;
+  text-decoration: none;
+  margin: 0 10px;
+  font-weight: 700;
+}
+
+.lecture-footer a:hover {
+  color: #ffffff;
+}
+
+.footer-brand {
+  display: block;
+  margin-top: 10px;
+  font-size: 18px;
+  color: #718096;
+  font-weight: 500;
+}
+
+/* ─── 목차(index) 전용 ──────────────────────────────────── */
+.index-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+  margin: 36px 0;
+}
+
+.week-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 28px;
+  transition: all 0.2s;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  position: relative;
+  overflow: hidden;
+}
+
+.week-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, #2c5282 0%, #ed8936 100%);
+}
+
+.week-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(44, 82, 130, 0.15);
+  border-color: #2b6cb0;
+}
+
+.week-card .week-num {
+  font-size: 20px;
+  font-weight: 800;
+  color: #ed8936;
+  letter-spacing: 0.06em;
+  margin-bottom: 10px;
+}
+
+.week-card .week-title {
+  font-size: 25px;
+  font-weight: 800;
+  color: #2c5282;
+  line-height: 1.4;
+  margin-bottom: 10px;
+}
+
+.week-card .week-files {
+  font-size: 20px;
+  color: #718096;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.index-intro {
+  background: linear-gradient(135deg, #ebf8ff 0%, #fff5f5 100%);
+  padding: 32px;
+  border-radius: 14px;
+  margin: 28px 0;
+  border: 1px solid #e2e8f0;
+}
+
+.index-intro h3 {
+  font-size: 28px !important;
+}
+
+.index-intro p {
+  color: #2d3748;
+  margin: 10px 0;
+  font-size: 23px;
+  line-height: 1.75;
+}
+
+/* ─── 모바일 반응형 ─────────────────────────────────────── */
+@media (max-width: 780px) {
+  body {
+    font-size: 20px;
+  }
+  .lecture-header,
+  .lecture-content,
+  .lecture-footer {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+  .lecture-header h1 {
+    font-size: 38px;
+  }
+  .lecture-header .subtitle {
+    font-size: 22px;
+  }
+  .lecture-content h2 {
+    font-size: 30px;
+  }
+  .lecture-content h3 {
+    font-size: 25px;
+  }
+  .lecture-content h4 {
+    font-size: 22px;
+  }
+  .lecture-content p,
+  .lecture-content li,
+  .box-objective p,
+  .box-objective li,
+  .box-task p,
+  .box-task li,
+  .box-tip p,
+  .box-tip li {
+    font-size: 20px;
+  }
+  .week-card .week-title {
+    font-size: 22px;
+  }
+}
+
+/* ─── 인쇄 전용 ─────────────────────────────────────────── */
+@media print {
+  body {
+    background: #ffffff;
+    color: #000000;
+    font-size: 17px;
+    line-height: 1.6;
+  }
+  .lecture-container {
+    box-shadow: none;
+    max-width: none;
+  }
+  .lecture-header {
+    background: #2c5282 !important;
+    color: #ffffff !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    padding: 28px;
+  }
+  .lecture-header h1 {
+    font-size: 28px;
+  }
+  .lecture-header .subtitle {
+    font-size: 16px;
+  }
+  .lecture-header::after {
+    background: #ed8936 !important;
+  }
+  .lecture-content {
+    padding: 28px;
+  }
+  .lecture-content h2 {
+    font-size: 22px;
+    margin: 24px 0 10px;
+  }
+  .lecture-content h3 {
+    font-size: 18px;
+  }
+  .lecture-content p,
+  .lecture-content li,
+  .box-objective p,
+  .box-objective li,
+  .box-task p,
+  .box-task li,
+  .box-tip p,
+  .box-tip li {
+    font-size: 17px;
+  }
+  .box-objective,
+  .box-task,
+  .box-tip,
+  .lecture-content h3 {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    page-break-inside: avoid;
+  }
+  .lecture-footer {
+    background: #f7fafc !important;
+    color: #2d3748 !important;
+    padding: 14px;
+  }
+  .breadcrumb,
+  .lecture-footer a {
+    display: none;
+  }
+  a {
+    color: #2c5282 !important;
+    text-decoration: none;
+  }
+  pre,
+  blockquote {
+    page-break-inside: avoid;
+  }
+  h2, h3 {
+    page-break-after: avoid;
+  }
+}
