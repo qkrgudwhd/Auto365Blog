@@ -267,9 +267,15 @@
   .week li{margin:7px 0}
   .week .out{margin-top:14px;padding-top:13px;border-top:1px dashed var(--line);
              color:var(--accent);font-weight:800;font-size:19px}
-  .week .lec{display:inline-block;margin-top:12px;font-size:18px;font-weight:800;color:var(--brand);
-             text-decoration:none;border-bottom:2px solid rgba(109,40,217,.25)}
-  .week .lec:hover{color:var(--brand2);border-bottom-color:currentColor}
+  /* 녹색 결과 줄 = 그 주 강의안 버튼 (흰 글씨 대비 5:1 이상이 되게 진한 녹색) */
+  .week a.out-btn{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px 14px;
+             margin-top:16px;padding:15px 22px;border-radius:14px;background:#047857;color:#fff;
+             font-weight:800;font-size:19px;line-height:1.45;text-decoration:none;
+             box-shadow:0 8px 20px rgba(4,120,87,.28);transition:.2s}
+  .week a.out-btn:hover,.week a.out-btn:focus-visible{background:#065f46;transform:translateY(-2px);
+             box-shadow:0 12px 26px rgba(4,120,87,.36)}
+  .week a.out-btn .go{background:#fff;color:#047857;padding:5px 14px;border-radius:999px;
+             font-size:16px;white-space:nowrap}
   .curri-all{text-align:center;margin-top:26px}
 
   /* 강사 */
@@ -608,8 +614,7 @@
         <li>클로드·제미나이 AI 열쇠(API 키) 발급</li>
         <li>6주간 쓸 기록 폴더 만들기</li>
       </ul>
-      <div class="out">→ 개발 환경 완성 + 내 기록 폴더</div>
-      <a class="lec" href="lecture/1주%20강의안/1주차_강의안.html">📘 1주차 강의안 보기 →</a>
+      <a class="out-btn" href="lecture/1주%20강의안/1주차_강의안.html">→ 개발 환경 완성 + 내 기록 폴더 <span class="go">1주차 강의안 보기 ▶</span></a>
     </div>
 
     <div class="week">
@@ -620,8 +625,7 @@
         <li>브라우저 F12로 버튼 위치를 직접 뽑아내기</li>
         <li>사이트 디자인이 바뀌어도 혼자 고치는 법</li>
       </ul>
-      <div class="out">→ 내 블로그에 글 1개 자동 발행 성공</div>
-      <a class="lec" href="lecture/2주%20강의안/2주차_강의안.html">📘 2주차 강의안 보기 →</a>
+      <a class="out-btn" href="lecture/2주%20강의안/2주차_강의안.html">→ 내 블로그에 글 1개 자동 발행 성공 <span class="go">2주차 강의안 보기 ▶</span></a>
     </div>
 
     <div class="week">
@@ -632,8 +636,7 @@
         <li>목차가 자동으로 만들어지는 원리</li>
         <li>글자·여백·페이지·컬러 테마 바꾸기</li>
       </ul>
-      <div class="out">→ 내 원고로 만든 전자책 PDF 1권</div>
-      <a class="lec" href="lecture/3주%20강의안/3주차_강의안.html">📘 3주차 강의안 보기 →</a>
+      <a class="out-btn" href="lecture/3주%20강의안/3주차_강의안.html">→ 내 원고로 만든 전자책 PDF 1권 <span class="go">3주차 강의안 보기 ▶</span></a>
     </div>
 
     <div class="week">
@@ -644,8 +647,7 @@
         <li>깃허브 가입 · 저장소 만들기 · 파일 올리기</li>
         <li>GitHub Pages 무료 배포 · 신청 버튼 연결</li>
       </ul>
-      <div class="out">→ 명함에 적을 수 있는 내 주소</div>
-      <a class="lec" href="lecture/4주%20강의안/4주차_강의안.html">📘 4주차 강의안 보기 →</a>
+      <a class="out-btn" href="lecture/4주%20강의안/4주차_강의안.html">→ 명함에 적을 수 있는 내 주소 <span class="go">4주차 강의안 보기 ▶</span></a>
     </div>
 
     <div class="week">
@@ -656,8 +658,7 @@
         <li>원고 규격 맞추기 · 표지 만들기</li>
         <li>ISBN 신청 · 정가 책정 · 판매 등록</li>
       </ul>
-      <div class="out">→ 부크크에 등록된 내 책 (컬러)</div>
-      <a class="lec" href="lecture/5주%20강의안/5주차_강의안.html">📘 5주차 강의안 보기 →</a>
+      <a class="out-btn" href="lecture/5주%20강의안/5주차_강의안.html">→ 부크크에 등록된 내 책 (컬러) <span class="go">5주차 강의안 보기 ▶</span></a>
     </div>
 
     <div class="week">
@@ -668,8 +669,7 @@
         <li>강의 제안서 · 교안 만들기 (클로드 협업)</li>
         <li>수료 후 마스터 커뮤니티 · 상시 Q&amp;A</li>
       </ul>
-      <div class="out">→ 기업·기관에 낼 수 있는 강의 제안서 1부</div>
-      <a class="lec" href="lecture/6주%20강의안/6주차_강의안.html">📘 6주차 강의안 보기 →</a>
+      <a class="out-btn" href="lecture/6주%20강의안/6주차_강의안.html">→ 기업·기관에 낼 수 있는 강의 제안서 1부 <span class="go">6주차 강의안 보기 ▶</span></a>
     </div>
     <div class="curri-all"><a class="btn grad" href="lecture/">📚 6주 강의안 전체 보기</a></div>
   </div>
