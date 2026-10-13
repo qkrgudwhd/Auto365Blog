@@ -397,13 +397,17 @@
 .st-grid{display:grid;gap:20px;grid-template-columns:1fr;margin-top:20px}
 /* 네이버스토어처럼 — 왼쪽 보여 주는 것, 오른쪽 사는 곳 (별님 2026-10-14) */
 .st-card{background:#fff;border:1px solid #e9ebf1;border-radius:18px;
-  padding:0;overflow:hidden;display:grid;grid-template-columns:420px 1fr;
-  min-width:0;align-items:stretch}
+  padding:0;overflow:hidden;display:grid;grid-template-columns:480px 1fr;
+  min-width:0;align-items:center}
 .st-card.st-hero{background:linear-gradient(135deg,#faf8ff,#f5f7ff);border-color:#ddd6fe}
+/* 🔴 별님 2026-10-14 — 「좌우로 잘려서 나옵니다. 전부 화면이 보이게 16:9 로」
+   cover 는 칸을 채우려고 **양옆을 잘라낸다**. 16:9 칸을 만들고 contain 으로
+   통째로 보이게 한다. (영상도 1280x720 = 16:9 라 딱 맞는다) */
 .st-media{background:#0f1117;display:flex;align-items:center;justify-content:center;
-  min-height:300px;overflow:hidden}
-.st-media video,.st-media img{width:100%;height:100%;object-fit:cover;display:block}
-.st-noimg{background:linear-gradient(135deg,#6d28d9,#2563eb);padding:28px}
+  aspect-ratio:16/9;width:100%;overflow:hidden;align-self:stretch}
+.st-media video,.st-media img{width:100%;height:100%;object-fit:contain;display:block}
+.st-noimg{background:linear-gradient(135deg,#6d28d9,#2563eb);padding:28px;
+  aspect-ratio:16/9}
 .st-noimg span{color:#fff;font-weight:800;font-size:22px;line-height:1.45;
   text-align:center;letter-spacing:-.4px}
 .st-info{padding:26px 28px;display:flex;flex-direction:column;min-width:0}
@@ -412,7 +416,7 @@
 .st-more:hover{background:#eff6ff}
 @media(max-width:860px){
   .st-card{grid-template-columns:1fr}
-  .st-media{min-height:220px}
+  .st-media{aspect-ratio:16/9}
   .st-info{padding:20px}
 }
 .st-card h3{margin:0 0 6px;font-size:20px;font-weight:800;letter-spacing:-.3px;color:#1f2937}
