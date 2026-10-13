@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ko"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>스토어 · Auto365Blog</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+<style>
+:root{
+  --ink:#16263d; --ink2:#1f3350; --soft:#6e7f96; --line:#cfd8e6;
+  --bg:#ffffff; --card:#f8fafc; --brand:#6d28d9; --brand2:#4c1d95;
+  --gold:#c9a227; --ok:#03c75a;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Pretendard","Segoe UI",system-ui,-apple-system,sans-serif;
+  line-height:1.75;-webkit-text-size-adjust:100%}
+.wrap{max-width:1080px;margin:0 auto;padding-inline:20px;padding-block:28px 64px}
+a{color:var(--brand)}
+header.top{border-bottom:1px solid var(--line);background:#fff;
+  position:sticky;top:env(safe-area-inset-top,0px);z-index:20}
+header.top .wrap{padding-block:14px;display:flex;align-items:center;
+  justify-content:space-between;gap:16px;flex-wrap:wrap}
+.logo{font-weight:800;font-size:19px;color:var(--ink);text-decoration:none}
+nav.m a{color:var(--ink2);text-decoration:none;margin-left:18px;font-size:15px}
+nav.m a:hover{color:var(--brand)}
+h1.t{font-size:clamp(28px,5vw,40px);margin:34px 0 8px;letter-spacing:-.6px;text-wrap:balance}
+p.sub{color:var(--soft);margin:0 0 34px}
+h2.g{font-size:22px;margin:46px 0 4px;padding-bottom:10px;
+  border-bottom:2px solid var(--line)}
+.grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));
+  margin-top:20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;
+  padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.card.hero{grid-column:1/-1;background:linear-gradient(135deg,#f5f3ff,#eef2ff);
+  border-color:#ddd6fe}
+.card h3{margin:0 0 6px;font-size:19px;letter-spacing:-.3px}
+.card.hero h3{font-size:clamp(22px,3.4vw,28px)}
+.one{color:var(--brand2);font-weight:600;margin:0 0 10px}
+.desc{color:var(--soft);font-size:15px;margin:0 0 16px;flex:1}
+.price{font-size:24px;font-weight:800;letter-spacing:-.5px;
+  font-variant-numeric:tabular-nums}
+.was{color:var(--soft);text-decoration:line-through;font-size:15px;
+  margin-right:8px;font-weight:500}
+.term{color:var(--soft);font-size:14px;margin-left:8px;font-weight:500}
+.buy{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.buy a{flex:1 1 auto;text-align:center;min-width:104px;padding:11px 14px;
+  border-radius:10px;color:#fff;text-decoration:none;font-weight:700;font-size:15px}
+.none{color:var(--soft);font-size:14px;margin-top:14px}
+footer.biz{border-top:1px solid var(--line);background:#f8fafc;margin-top:56px}
+footer.biz .wrap{padding-block:28px 40px;color:var(--soft);font-size:14px}
+footer.biz b{color:var(--ink2)}
+footer.biz .links{margin-bottom:12px}
+footer.biz .links a{margin-right:16px}
+.doc h2{font-size:19px;margin:30px 0 6px}
+.doc p,.doc li{color:var(--ink2)}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ink:#e9eef7; --ink2:#c7d2e4; --soft:#93a3bb; --line:#2a3447;
+    --bg:#0f141e; --card:#171e2b; --brand:#a78bfa; --brand2:#c4b5fd;
+    color-scheme:dark;
+  }
+  :root:not([data-theme="light"]) header.top{background:#0f141e}
+  :root:not([data-theme="light"]) .card.hero{
+    background:linear-gradient(135deg,#1e1b32,#161d2e); border-color:#3b2f6b}
+  :root:not([data-theme="light"]) footer.biz{background:#131a26}
+}
+</style></head><body>
+<header class="top"><div class="wrap">
+  <a class="logo" href="index.html">Auto365Blog</a>
+  <nav class="m">
+    <a href="index.html#curri">커리큘럼</a>
+    <a href="store.html">스토어</a>
+    <a href="index.html#price">수강료</a>
+    <a href="free.html">무료 프로그램</a>
+  </nav>
+</div></header>
+<main class="wrap">
+<h1 class="t">스토어</h1>
+<p class="sub">강의 · 프로그램 · 맡기는 일을 한자리에 모았습니다.</p>
+<h2 class="g">교육</h2>
+<div class="grid"><article class="card hero"><h3>Auto365Blog 3기 수강 과정</h3><p class="one">블로그 네 곳을 스스로 굴리는 법을 6주 동안 배웁니다</p><p class="desc">네이버·티스토리·구글·워드프레스를 자동으로 운영하는 과정입니다. 주 1회 2시간, 6주 과정이며 수업 영상을 다시 보실 수 있습니다.</p><div class="price"><span class="was">3,300,000원</span>1,100,000원<span class="term">6주 과정</span></div><div class="none">판매처 준비 중입니다 — 문의해 주세요</div></article></div>
+<h2 class="g">프로그램</h2>
+<div class="grid"><article class="card"><h3>블로그 글쓰기 자동화 프로그램</h3><p class="one">네 곳에 글을 올리고 소통까지 해 주는 프로그램</p><p class="desc">글 초안 작성, 이미지 넣기, 발행, 공감·댓글·이웃 맺기를 사람 손 대신 해 줍니다. 쓰시는 분 계정으로 직접 돌아갑니다.</p><div class="price">문의</div><div class="none">판매처 준비 중입니다 — 문의해 주세요</div></article><article class="card"><h3>황금키워드 채굴기</h3><p class="one">검색은 많고 글은 적은 낱말을 찾아 주는 도구</p><p class="desc">네이버 검색량과 문서 수를 재어 경쟁률을 계산하고, 엑셀로 정리해 줍니다.</p><div class="price">문의</div><div class="none">판매처 준비 중입니다 — 문의해 주세요</div></article><article class="card"><h3>전자책 자동 출판 프로그램</h3><p class="one">원고에서 표지·내지·PDF까지 한 번에</p><p class="desc">부크크 규격에 맞는 인쇄용 PDF와 표지를 만들어 줍니다.</p><div class="price">문의</div><div class="none">판매처 준비 중입니다 — 문의해 주세요</div></article><article class="card"><h3>사진 글쓰기 프로그램</h3><p class="one">사진을 넣으면 글이 되어 블로그로</p><p class="desc">사진에 담긴 날짜·장소를 읽고 글을 지어 올립니다.</p><div class="price">문의</div><div class="none">판매처 준비 중입니다 — 문의해 주세요</div></article><article class="card"><h3>이미지 묶음 생성 프로그램</h3><p class="one">한 번에 여러 장을 만들어 주는 그림 도구</p><p class="desc">주제를 주면 여러 장을 연달아 만들어 폴더에 담아 줍니다.</p><div class="price">문의</div><div class="none">판매처 준비 중입니다 — 문의해 주세요</div></article><article class="card"><h3>음악 영상 제작 프로그램</h3><p class="one">글에서 쇼츠 영상과 썸네일까지</p><p class="desc">제목만 주면 세로 영상과 썸네일을 만들고 나레이션을 입힙니다.</p><div class="price">문의</div><div class="none">판매처 준비 중입니다 — 문의해 주세요</div></article></div>
+<h2 class="g">맡기는 일</h2>
+<div class="grid"><article class="card"><h3>컴퓨터 원격 지원</h3><p class="one">느려짐·오류·부팅 불가를 원격으로</p><p class="desc">증상 하나 해결 2만원부터, 전체 점검 5만원, 재설치·세팅 10만원입니다.</p><div class="price">20,000원</div><div class="none">판매처 준비 중입니다 — 문의해 주세요</div></article><article class="card"><h3>전자책 조판·출판 대행</h3><p class="one">원고를 책 모양으로 만들어 드립니다</p><p class="desc">인쇄용 PDF와 표지를 만들어 드립니다. 쪽수에 따라 값이 달라집니다.</p><div class="price">문의</div><div class="none">판매처 준비 중입니다 — 문의해 주세요</div></article><article class="card"><h3>글 초안 작성</h3><p class="one">주제를 주시면 초안을 써 드립니다</p><p class="desc">블로그·소개글·안내문 초안을 작성해 드립니다.</p><div class="price">문의</div><div class="none">판매처 준비 중입니다 — 문의해 주세요</div></article><article class="card"><h3>논문 교정</h3><p class="one">맞춤법과 문장을 다듬어 드립니다</p><p class="desc"></p><div class="price">문의</div><div class="none">판매처 준비 중입니다 — 문의해 주세요</div></article><article class="card"><h3>데이터 복구</h3><p class="one">지워진 파일을 되살려 드립니다</p><p class="desc"></p><div class="price">문의</div><div class="none">판매처 준비 중입니다 — 문의해 주세요</div></article><article class="card"><h3>사주 명리 풀이</h3><p class="one">생년월일로 풀어 드리는 안내</p><p class="desc"></p><div class="price">문의</div><div class="none">판매처 준비 중입니다 — 문의해 주세요</div></article></div></main>
+<footer class="biz"><div class="wrap">
+  <div class="links">
+    <a href="terms.html">이용약관</a>
+    <a href="privacy.html">개인정보처리방침</a>
+    <a href="refund.html">환불·취소 정책</a>
+  </div>
+  <div>
+    <b>한결솔루션</b> · 대표 박형종<br>
+    사업자등록번호 266-13-03311 · 통신판매업신고 제 2026-경남김해-1006 호<br>
+    경상남도 김해시 주촌면 선지로 85, 105동 2103호 (김해센텀큐시티)<br>
+    이메일 phjcom3@gmail.com<br>
+    개인정보보호책임자 박형종
+  </div>
+</div></footer>
+</body></html>
