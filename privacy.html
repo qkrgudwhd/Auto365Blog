@@ -394,12 +394,27 @@
 .st-sub{color:#6b7280;margin:0 0 34px;font-size:17px}
 .st-g{font-size:23px;font-weight:800;margin:46px 0 4px;padding-bottom:10px;
   border-bottom:2px solid #e9ebf1;color:#1f2937}
-.st-grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));
-  margin-top:20px}
-.st-card{background:#fafbfe;border:1px solid #e9ebf1;border-radius:16px;
-  padding:22px;display:flex;flex-direction:column;min-width:0}
-.st-card.st-hero{grid-column:1/-1;background:linear-gradient(135deg,#f5f3ff,#eef2ff);
-  border-color:#ddd6fe}
+.st-grid{display:grid;gap:20px;grid-template-columns:1fr;margin-top:20px}
+/* 네이버스토어처럼 — 왼쪽 보여 주는 것, 오른쪽 사는 곳 (별님 2026-10-14) */
+.st-card{background:#fff;border:1px solid #e9ebf1;border-radius:18px;
+  padding:0;overflow:hidden;display:grid;grid-template-columns:420px 1fr;
+  min-width:0;align-items:stretch}
+.st-card.st-hero{background:linear-gradient(135deg,#faf8ff,#f5f7ff);border-color:#ddd6fe}
+.st-media{background:#0f1117;display:flex;align-items:center;justify-content:center;
+  min-height:300px;overflow:hidden}
+.st-media video,.st-media img{width:100%;height:100%;object-fit:cover;display:block}
+.st-noimg{background:linear-gradient(135deg,#6d28d9,#2563eb);padding:28px}
+.st-noimg span{color:#fff;font-weight:800;font-size:22px;line-height:1.45;
+  text-align:center;letter-spacing:-.4px}
+.st-info{padding:26px 28px;display:flex;flex-direction:column;min-width:0}
+.st-pay{background:#1f6feb}
+.st-more{background:#fff;color:#1f6feb !important;border:2px solid #1f6feb}
+.st-more:hover{background:#eff6ff}
+@media(max-width:860px){
+  .st-card{grid-template-columns:1fr}
+  .st-media{min-height:220px}
+  .st-info{padding:20px}
+}
 .st-card h3{margin:0 0 6px;font-size:20px;font-weight:800;letter-spacing:-.3px;color:#1f2937}
 .st-card.st-hero h3{font-size:clamp(23px,3.4vw,29px)}
 .st-one{color:#4c1d95;font-weight:700;margin:0 0 10px}
