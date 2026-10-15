@@ -392,14 +392,20 @@
 .st-t{font-size:clamp(30px,5vw,44px);font-weight:800;letter-spacing:-.6px;
   margin:10px 0 8px;color:#1f2937}
 .st-sub{color:#6b7280;margin:0 0 34px;font-size:17px}
-.st-g{font-size:23px;font-weight:800;margin:46px 0 4px;padding-bottom:10px;
-  border-bottom:2px solid #e9ebf1;color:#1f2937}
+.st-g{font-size:23px;font-weight:800;margin:52px 0 4px;padding:0 0 12px 14px;
+  border-bottom:2px solid #eef0f7;color:#111827;position:relative;letter-spacing:-.4px}
+.st-g::before{content:"";position:absolute;left:0;top:3px;bottom:14px;width:5px;
+  border-radius:3px;background:linear-gradient(180deg,#6d28d9,#2563eb)}
 .st-grid{display:grid;gap:20px;grid-template-columns:1fr;margin-top:20px}
 /* 네이버스토어처럼 — 왼쪽 보여 주는 것, 오른쪽 사는 곳 (별님 2026-10-14) */
-.st-card{background:#fff;border:1px solid #e9ebf1;border-radius:18px;
-  padding:0;overflow:hidden;display:grid;grid-template-columns:480px 1fr;
-  min-width:0;align-items:center}
-.st-card.st-hero{background:linear-gradient(135deg,#faf8ff,#f5f7ff);border-color:#ddd6fe}
+.st-card{background:#fff;border:1px solid #e9ebf1;border-radius:20px;
+  padding:0;overflow:hidden;display:grid;grid-template-columns:460px 1fr;
+  min-width:0;align-items:stretch;
+  box-shadow:0 1px 2px rgba(17,24,39,.04);transition:.22s ease}
+.st-card:hover{transform:translateY(-3px);border-color:#ddd6fe;
+  box-shadow:0 16px 40px rgba(76,29,149,.10)}
+.st-card.st-hero{border-color:#ddd6fe;box-shadow:0 10px 34px rgba(76,29,149,.10)}
+.st-card.st-hero .st-info{background:linear-gradient(135deg,#fdfbff,#f6f8ff)}
 /* 🔴 별님 2026-10-14 — 「좌우로 잘려서 나옵니다. 전부 화면이 보이게 16:9 로」
    cover 는 칸을 채우려고 **양옆을 잘라낸다**. 16:9 칸을 만들고 contain 으로
    통째로 보이게 한다. (영상도 1280x720 = 16:9 라 딱 맞는다) */
@@ -410,28 +416,38 @@
   aspect-ratio:16/9}
 .st-noimg span{color:#fff;font-weight:800;font-size:22px;line-height:1.45;
   text-align:center;letter-spacing:-.4px}
-.st-info{padding:26px 28px;display:flex;flex-direction:column;min-width:0}
-.st-pay{background:#1f6feb}
-.st-more{background:#fff;color:#1f6feb !important;border:2px solid #1f6feb}
-.st-more:hover{background:#eff6ff}
+.st-info{padding:28px 30px;display:flex;flex-direction:column;min-width:0;
+  justify-content:center}
+/* 뱃지 줄 — 과정 기간·추천 (별님 2026-10-15) */
+.st-tags{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px}
+.st-tag{font-size:12px;font-weight:800;letter-spacing:.02em;padding:4px 10px;
+  border-radius:999px;background:#f1f2f7;color:#4b5563}
+.st-tag.hot{background:linear-gradient(135deg,#6d28d9,#2563eb);color:#fff}
+/* 값 칸 — 눈에 띄게 한 덩어리로 */
+.st-pricebox{background:#f8f9fe;border:1px solid #eef0f7;border-radius:14px;
+  padding:14px 16px;margin-top:4px}
+.st-pay{background:linear-gradient(135deg,#6d28d9,#2563eb)}
+.st-pay.st-soon{background:linear-gradient(135deg,#8b5cf6,#60a5fa)}
+.st-more{background:#fff;color:#6d28d9 !important;border:2px solid #ddd6fe}
+.st-more:hover{background:#faf8ff;border-color:#c4b5fd}
 @media(max-width:860px){
   .st-card{grid-template-columns:1fr}
   .st-media{aspect-ratio:16/9}
   .st-info{padding:20px}
 }
-.st-card h3{margin:0 0 6px;font-size:20px;font-weight:800;letter-spacing:-.3px;color:#1f2937}
-.st-card.st-hero h3{font-size:clamp(23px,3.4vw,29px)}
-.st-one{color:#4c1d95;font-weight:700;margin:0 0 10px}
-.st-desc{color:#6b7280;font-size:15px;margin:0 0 16px;flex:1;line-height:1.7}
-.st-price{font-size:25px;font-weight:800;letter-spacing:-.5px;color:#1f2937;
+.st-card h3{margin:0 0 7px;font-size:21px;font-weight:800;letter-spacing:-.4px;color:#111827}
+.st-card.st-hero h3{font-size:clamp(24px,3.4vw,30px)}
+.st-one{color:#5b21b6;font-weight:700;margin:0 0 12px;font-size:16px;letter-spacing:-.2px}
+.st-desc{color:#6b7280;font-size:15px;margin:0 0 16px;line-height:1.75}
+.st-price{font-size:27px;font-weight:800;letter-spacing:-.6px;color:#111827;
   font-variant-numeric:tabular-nums}
 .st-was{color:#9aa3b2;text-decoration:line-through;font-size:15px;margin-right:8px;font-weight:500}
 .st-term{color:#6b7280;font-size:14px;margin-left:8px;font-weight:500}
 .st-buy{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
-.st-buy a{flex:1 1 auto;text-align:center;min-width:104px;padding:12px 14px;
-  border-radius:12px;color:#fff;text-decoration:none;font-weight:800;font-size:15px;
-  transition:.2s ease}
-.st-buy a:hover{transform:translateY(-2px);opacity:.92}
+.st-buy a{flex:1 1 auto;text-align:center;min-width:120px;padding:13px 16px;
+  border-radius:13px;color:#fff;text-decoration:none;font-weight:800;font-size:15px;
+  letter-spacing:-.2px;transition:.2s ease}
+.st-buy a:hover{transform:translateY(-2px);filter:brightness(1.06)}
 .st-none{color:#9aa3b2;font-size:14px;margin-top:14px}
 .st-biz{border-top:1px solid #e9ebf1;background:#f8fafc;margin-top:56px}
 .st-biz .st-in{max-width:1080px;margin:0 auto;padding:30px 20px 46px;

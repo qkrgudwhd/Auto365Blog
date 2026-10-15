@@ -96,6 +96,35 @@
   .diagram .a{color:#34d399}
   .diagram .v{color:#f87171}
 
+
+  /* ── 채널 카드 (별님 2026-10-15, 밋밋함 개선) ───────────── */
+  .chcard{background:#fff;border:1px solid var(--line);border-radius:18px;
+          box-shadow:var(--shadow);margin-bottom:18px;overflow:hidden}
+  .chcard .ch-h{display:flex;align-items:center;gap:12px;padding:16px 22px;
+          color:#fff}
+  .chcard .ch-n{width:28px;height:28px;border-radius:9px;flex:none;
+          background:rgba(255,255,255,.22);display:grid;place-items:center;
+          font-weight:800;font-size:14px}
+  .chcard .ch-t{font-weight:800;font-size:17px;letter-spacing:-.3px}
+  .chcard .ch-s{margin-left:auto;font-size:13px;opacity:.9;font-weight:600}
+  .chcard .ch-b{padding:6px 10px 14px}
+  .chrow{display:grid;grid-template-columns:230px 1fr;gap:4px 18px;
+          padding:13px 12px;border-radius:12px;align-items:start}
+  .chrow+.chrow{border-top:1px solid #f1f2f7}
+  .chrow:hover{background:#f8f9fe}
+  .chrow .nm{font-weight:800;color:#1f2937;font-size:15px;letter-spacing:-.2px}
+  .chrow .id{display:inline-block;margin-top:5px;font-size:12px;font-weight:700;
+          padding:3px 9px;border-radius:999px;background:#f1f2f7;color:#4b5563;
+          font-family:ui-monospace,Consolas,monospace}
+  .chrow .ds{color:#4b5563;font-size:15px;line-height:1.75}
+  .chrow .ds b{color:#1f2937}
+  .chnote{margin:4px 12px 2px;padding:12px 16px;border-radius:12px;
+          background:#f5f3ff;color:#4c1d95;font-size:14.5px;font-weight:600}
+  @media(max-width:760px){
+    .chrow{grid-template-columns:1fr;gap:2px}
+    .chrow .ds{font-size:14.5px}
+  }
+
   /* TAKEAWAYS */
   .take{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
   .take .panel{margin:0;border-top:4px solid var(--accent)}
@@ -222,33 +251,33 @@
     <div class="sec-head"><div class="num">3</div><h2>채널별 상세 분석</h2></div>
     <p class="sub">역할에 따른 3가지 카테고리 해설.</p>
 
-    <div class="panel">
-      <h3>① 메인 콘텐츠 허브 (블로그 · 웹사이트)</h3>
-      <ul class="clean">
-        <li><b>네이버 블로그(com-365)</b> — 국내 이용자 접근성 및 검색 최적화(SEO).</li>
-        <li><b>티스토리(talk1634)</b> — 국내 IT/전문 기술 지식 · 수익형 블로그 운영.</li>
-        <li><b>구글 블로거(phjliving)</b> — 구글 검색 노출·글로벌 확장.</li>
-        <li><b>워드프레스(webcosmos.space)</b> — 독립 웹 프레젠스 확보, 개인 브랜드 최상위 허브.</li>
-      </ul>
-    </div>
-    <div class="panel">
-      <h3>② 국내외 핵심 SNS (도달 · 확산)</h3>
-      <ul class="clean">
-        <li><b>비즈니스</b> — 링크드인: 전문 커리어·B2B 네트워킹.</li>
-        <li><b>글로벌 주류(메타)</b> — 페이스북·인스타그램·스레드: 대중 인지도, 시각/단문 소통.</li>
-        <li><b>실시간</b> — X(@phjcom3): 속보성 확산과 검색 유입.</li>
-        <li><b>탈중앙·대안</b> — 블루스카이·마스토돈: 웹3 트렌드 선점.</li>
-      </ul>
-    </div>
-    <div class="panel">
-      <h3>③ 영상 채널 (노출 · 신뢰)</h3>
-      <ul class="clean">
-        <li><b>유튜브(@auto365blog)</b> — 검색 다음으로 큰 유입 경로. 롱폼으로 신뢰를, 쇼츠로 도달을 가져갑니다.
-            API 키 발급 등 <b>사용법 강의 영상</b>도 이 채널에 올라갑니다.</li>
-        <li><b>틱톡(@ai365blog)</b> — 팔로워가 적어도 좋은 영상이면 퍼지는 구조. 신규 유입 확보에 유리.</li>
-        <li>같은 원고에서 <b>대본 → 이미지 → 영상 → 음악</b> 순으로 만들어져 두 채널에 함께 올라갑니다.</li>
-      </ul>
-    </div>
+    <div class="chcard">
+<div class="ch-h" style="background:#6d28d9"><div class="ch-n">①</div><div class="ch-t">메인 콘텐츠 허브</div><div class="ch-s">블로그 · 웹사이트</div></div>
+<div class="ch-b">
+<div class="chrow"><div><div class="nm">네이버 블로그</div><span class="id">com-365</span></div><div class="ds">국내 이용자 접근성과 <b>검색 최적화(SEO)</b>. 가장 많은 독자가 들어오는 문입니다.</div></div>
+<div class="chrow"><div><div class="nm">티스토리</div><span class="id">talk1634</span></div><div class="ds">국내 IT·전문 기술 지식과 <b>수익형</b> 블로그 운영.</div></div>
+<div class="chrow"><div><div class="nm">구글 블로거</div><span class="id">phjliving</span></div><div class="ds">구글 검색 노출로 <b>국경 밖</b>까지 넓힙니다.</div></div>
+<div class="chrow"><div><div class="nm">워드프레스</div><span class="id">webcosmos.space</span></div><div class="ds">남의 집이 아닌 <b>내 집</b>. 개인 브랜드의 최상위 허브입니다.</div></div>
+</div>
+</div>
+<div class="chcard">
+<div class="ch-h" style="background:#2563eb"><div class="ch-n">②</div><div class="ch-t">국내외 핵심 SNS</div><div class="ch-s">도달 · 확산</div></div>
+<div class="ch-b">
+<div class="chrow"><div><div class="nm">비즈니스</div><span class="id">링크드인</span></div><div class="ds">전문 커리어와 <b>B2B</b> 네트워킹.</div></div>
+<div class="chrow"><div><div class="nm">글로벌 주류</div><span class="id">메타 3종</span></div><div class="ds">페이스북 · 인스타그램 · 스레드 — 대중 인지도와 시각·단문 소통.</div></div>
+<div class="chrow"><div><div class="nm">실시간</div><span class="id">X · @phjcom3</span></div><div class="ds">속보성 확산과 <b>검색 유입</b>.</div></div>
+<div class="chrow"><div><div class="nm">탈중앙 · 대안</div><span class="id">블루스카이 · 마스토돈</span></div><div class="ds">웹3 흐름을 <b>미리</b> 잡아 둡니다.</div></div>
+</div>
+<div class="chnote">한 번 쓴 글이 일곱 곳으로 동시에 퍼집니다.</div>
+</div>
+<div class="chcard">
+<div class="ch-h" style="background:#ef4444"><div class="ch-n">③</div><div class="ch-t">영상 채널</div><div class="ch-s">노출 · 신뢰</div></div>
+<div class="ch-b">
+<div class="chrow"><div><div class="nm">유튜브</div><span class="id">@auto365blog</span></div><div class="ds">검색 다음으로 큰 유입 경로. <b>롱폼으로 신뢰를, 쇼츠로 도달</b>을 가져갑니다. API 키 발급 같은 <b>사용법 강의 영상</b>도 이 채널에 올라갑니다.</div></div>
+<div class="chrow"><div><div class="nm">틱톡</div><span class="id">@ai365blog</span></div><div class="ds">팔로워가 적어도 <b>좋은 영상이면 퍼지는</b> 구조. 신규 유입에 유리합니다.</div></div>
+</div>
+<div class="chnote">같은 원고에서 <b>대본 → 이미지 → 영상 → 음악</b> 순으로 만들어져 두 채널에 함께 올라갑니다.</div>
+</div>
   </div>
 </section>
 
