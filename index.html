@@ -20,7 +20,7 @@
   }
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
-  body{margin:0;background:var(--bg);color:var(--ink);line-height:1.75;word-break:keep-all;font-size:22px;
+  body{margin:0;background:linear-gradient(180deg,#f7f8fd 0%,#f1f2fa 45%,#f6f4fc 100%) fixed;color:var(--ink);line-height:1.75;word-break:keep-all;font-size:22px;
        font-family:"Pretendard","Segoe UI",system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
   a{color:var(--brand2);text-decoration:none}
   img{max-width:100%;display:block}
@@ -185,8 +185,29 @@
   .vband .cap span{font-size:20px;opacity:.9}
 
   /* ===== SECTION ===== */
-  section{padding:74px 0}
-  section.alt{background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  /* ══════════════════════════════════════════════════════════
+     바탕 — 2026-10-18 별님 「흰색 바탕보다 그라데이션과 애니메이션」
+       흰 종이 대신 **아주 천천히 흐르는 빛**을 깔았다.
+       ① 움직이는 것은 transform 하나뿐 (화면칩이 처리해 안 끊긴다)
+       ② 28초에 한 바퀴. 눈에 띄면 글을 못 읽는다 — 알아채기 직전이 알맞다
+       ③ 글이 얹히는 칸은 **반투명 흰색** — 빛은 비치되 글자는 또렷하다
+       ④ 움직임이 불편한 분껜 위 prefers-reduced-motion 규칙이 멈춰 준다
+     ══════════════════════════════════════════════════════════ */
+  body::before{content:"";position:fixed;inset:-25%;z-index:-1;pointer-events:none;
+       background:
+         radial-gradient(40% 36% at 18% 20%,rgba(109,40,217,.17),transparent 70%),
+         radial-gradient(36% 32% at 84% 16%,rgba(37,99,235,.16),transparent 70%),
+         radial-gradient(42% 38% at 72% 84%,rgba(16,185,129,.13),transparent 70%),
+         radial-gradient(38% 34% at 20% 80%,rgba(245,158,11,.11),transparent 70%);
+       animation:bgdrift 28s ease-in-out infinite alternate;will-change:transform}
+  @keyframes bgdrift{
+    0%{transform:translate3d(-2.5%,-1.5%,0) scale(1)}
+    50%{transform:translate3d(2%,2.5%,0) scale(1.06)}
+    100%{transform:translate3d(-1.5%,2%,0) scale(1.02)}
+  }
+  section{padding:74px 0;scroll-margin-top:86px}
+  section.alt{background:linear-gradient(180deg,rgba(255,255,255,.88),rgba(255,255,255,.62));
+       border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
   .sec-head{display:flex;align-items:center;gap:13px;margin-bottom:8px}
   .sec-head .num{width:40px;height:40px;border-radius:12px;flex:0 0 auto;
         background:linear-gradient(135deg,var(--brand),var(--brand2));
@@ -395,6 +416,39 @@
   .bizinfo span{display:block;margin-right:0;white-space:normal}
 }
 </style>
+<!-- 🔑 별님 2026-10-18 — 「금전적인 부분이 첫 화면에 나오니 거부감이 있다.
+     열었을 때 #why 가 바로 나오게 해 달라」
+
+     주소에 # 이 없을 때만 1번 자리(왜)로 내려놓는다.
+     🔴 브라우저의 **지난 자리 되살리기**를 꺼야 한다. 안 그러면
+        다시 찾아온 분은 엉뚱한 데서 열린다.
+     🔴 스르륵(smooth) 내려가면 수강료가 **지나가는 게 보인다.**
+        그래서 그 동안만 auto 로 바꿔 한 번에 앉힌다.
+     🔴 자바스크립트가 막혀 있으면 이 글이 아예 안 돌아
+        화면 감추는 표시(.jumping)도 안 붙는다 = 흰 화면 사고가 안 난다. -->
+<script>
+(function () {
+  if (location.hash) return;
+  try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; } catch (e) {}
+  var 뿌리 = document.documentElement;
+  뿌리.className += ' jumping';
+  function 보이기() { 뿌리.className = 뿌리.className.split(' jumping').join(''); }
+  function 내려놓기() {
+    var 칸 = document.getElementById('why');
+    if (칸) {
+      var 옛 = 뿌리.style.scrollBehavior;
+      뿌리.style.scrollBehavior = 'auto';
+      칸.scrollIntoView();
+      뿌리.style.scrollBehavior = 옛;
+    }
+    보이기();
+  }
+  if (document.readyState !== 'loading') 내려놓기();
+  else document.addEventListener('DOMContentLoaded', 내려놓기);
+  setTimeout(보이기, 1500);          // 무슨 일이 있어도 화면은 보여 준다
+})();
+</script>
+<style>html.jumping body{visibility:hidden}</style>
 </head>
 <body>
 
