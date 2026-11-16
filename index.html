@@ -129,6 +129,61 @@
   .nav .apply:hover{transform:translateY(-2px) scale(1.03)}
   @keyframes glow{0%,100%{box-shadow:0 8px 20px rgba(109,40,217,.28)}50%{box-shadow:0 10px 30px rgba(109,40,217,.5)}}
 
+  /* ===== NAV 입체·그라데이션 (2026-11-16 별님 「메뉴가 도드라지게 입체적으로」) ===== */
+  .nav{background:linear-gradient(180deg,rgba(255,255,255,.97),rgba(245,243,255,.94))}
+  .nav::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:3px;pointer-events:none;
+       background:linear-gradient(90deg,#6d28d9,#2563eb,#06b6d4,#ec4899,#f59e0b,#6d28d9);
+       background-size:300% 100%;animation:grad 8s linear infinite;opacity:.85}
+  .nav ul{gap:8px}
+  .nav a.menu{
+       background:linear-gradient(180deg,#ffffff 0%,#f3efff 55%,#e6defd 100%);
+       border:1px solid rgba(109,40,217,.16);
+       box-shadow:inset 0 1px 0 rgba(255,255,255,.95),
+                  0 3px 0 rgba(109,40,217,.18),
+                  0 8px 16px rgba(76,29,149,.10);
+       text-shadow:0 1px 0 rgba(255,255,255,.9);
+       transform:translateY(0) perspective(400px) rotateX(0deg);
+       transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s ease,background .25s ease,color .25s}
+  .nav a.menu:hover{
+       background:linear-gradient(180deg,#ffffff 0%,#ede9fe 50%,#dbeafe 100%);
+       transform:translateY(-3px) perspective(400px) rotateX(8deg);
+       box-shadow:inset 0 1px 0 #fff,0 6px 0 rgba(109,40,217,.22),0 14px 24px rgba(76,29,149,.18)}
+  .nav a.menu:active{transform:translateY(2px);box-shadow:inset 0 2px 6px rgba(76,29,149,.25),0 1px 0 rgba(109,40,217,.2)}
+  /* 지금 보고 있는 메뉴 — 색이 흐르고, 빛이 지나가고, 점이 깜박인다 = 「동작 중」 */
+  .nav a.menu.active{
+       color:#fff !important;text-shadow:0 1px 2px rgba(0,0,0,.25);
+       background:linear-gradient(120deg,#6d28d9,#2563eb,#06b6d4,#ec4899,#6d28d9);
+       background-size:300% 300%;border-color:transparent;overflow:hidden;
+       animation:grad 3.2s ease infinite,navlive 1.8s ease-in-out infinite;
+       transform:translateY(-2px) perspective(400px) rotateX(6deg)}
+  .nav a.menu.active::before{width:0 !important}
+  .nav a.menu.active::after{content:"";position:absolute;top:0;left:-60%;width:45%;height:100%;
+       background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);
+       transform:skewX(-20deg);animation:navshine 2.4s ease-in-out infinite;pointer-events:none}
+  .nav a.menu .live{display:inline-block;width:8px;height:8px;border-radius:50%;margin-left:7px;
+       vertical-align:middle;background:#fde047;box-shadow:0 0 0 0 rgba(253,224,71,.8);
+       animation:livedot 1.2s ease-out infinite}
+  /* 2026-11-16 별님 「글자 폰트를 조금 줄여주세요」 — 19px → 17px (좁은 화면은 더 작게) */
+  .nav a.menu{white-space:nowrap;font-size:17px;padding:7px 12px}
+  .nav .apply{font-size:17px}
+  @media(max-width:1280px){.nav ul{gap:5px} .nav a.menu{font-size:15px;padding:6px 9px}
+       .nav .apply{font-size:16px;padding:9px 15px}}
+  @media(max-width:1060px){.nav a.menu{font-size:14px;padding:6px 8px} .nav .logo{font-size:21px}}
+  @keyframes navlive{0%,100%{box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 4px 0 #4c1d95,0 10px 22px rgba(109,40,217,.35)}
+                     50%{box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 4px 0 #4c1d95,0 14px 34px rgba(37,99,235,.55)}}
+  @keyframes navshine{0%{left:-60%}60%,100%{left:130%}}
+  @keyframes livedot{0%{box-shadow:0 0 0 0 rgba(253,224,71,.85)}100%{box-shadow:0 0 0 9px rgba(253,224,71,0)}}
+  /* 도착 축하 말풍선 */
+  .cheer{position:fixed;left:50%;top:92px;z-index:10001;pointer-events:none;
+       transform:translate(-50%,-20px) scale(.9);opacity:0;
+       padding:12px 22px;border-radius:999px;font-weight:800;font-size:19px;color:#fff;white-space:nowrap;
+       background:linear-gradient(120deg,#6d28d9,#2563eb,#ec4899);background-size:200% 200%;
+       box-shadow:0 12px 30px rgba(76,29,149,.35);animation:grad 2s ease infinite;
+       transition:opacity .35s ease,transform .45s cubic-bezier(.34,1.56,.64,1)}
+  .cheer.on{opacity:1;transform:translate(-50%,0) scale(1)}
+  @media(max-width:560px){.cheer{font-size:15px;top:76px;padding:9px 16px}}
+  #fxcanvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:10000}
+
   /* ===== HERO ===== */
   .hero{background:linear-gradient(135deg,#4c1d95 0%,#6d28d9 42%,#2563eb 100%);
         color:#fff;padding:78px 0 66px;position:relative;overflow:hidden}
@@ -1344,6 +1399,235 @@
     } else {
       els.forEach(run);
     }
+  })();
+
+  /* ══════════════════════════════════════════════════════════
+     ④ 메뉴 「동작 중」 표시 · 섹션 도착 축하 · 누를 때마다 혜성 — 2026-11-16 별님
+     · 지금 보고 있는 섹션의 메뉴에 .active (색이 흐르고 노란 점이 깜박인다)
+     · 섹션에 도착하면 풍선·폭죽·축하 말풍선 — 색은 64,000가지
+       (빨강·초록·파랑을 각각 40단계로 나눠 40×40×40 = 64,000 색 중에서 고른다)
+     · 화면을 누를 때마다 혜성이 날아가며 별빛이 반짝인다
+     🔴 움직임이 불편한 분(움직임끔)께는 그림 효과를 전부 끈다 — 메뉴 표시만 남는다
+     ══════════════════════════════════════════════════════════ */
+  (function () {
+    var links = {};
+    [].forEach.call(document.querySelectorAll('.nav a.menu[href^="#"]'), function (a) {
+      var id = a.getAttribute('href').slice(1);
+      if (document.getElementById(id)) links[id] = a;
+    });
+    var ids = Object.keys(links);
+    if (!ids.length) return;
+
+    /* ── 64,000 색 ── */
+    var STEP = 40;                                   // 채널마다 40단계 → 40³ = 64,000
+    function color64k(alpha) {
+      var r, g, b;
+      do {                                           // 너무 어두운 색은 다시 고른다(밝은 배경에서도 보이게)
+        r = Math.round(Math.floor(Math.random() * STEP) * 255 / (STEP - 1));
+        g = Math.round(Math.floor(Math.random() * STEP) * 255 / (STEP - 1));
+        b = Math.round(Math.floor(Math.random() * STEP) * 255 / (STEP - 1));
+      } while (r + g + b < 220);
+      return 'rgba(' + r + ',' + g + ',' + b + ',' + (alpha == null ? 1 : alpha) + ')';
+    }
+
+    /* ── 그림판 하나(필요할 때만 그린다) ── */
+    var cv = null, cx = null, parts = [], running = false, dpr = 1;
+    function ensureCanvas() {
+      if (cv) return;
+      cv = document.createElement('canvas');
+      cv.id = 'fxcanvas';
+      document.body.appendChild(cv);
+      cx = cv.getContext('2d');
+      resize();
+      addEventListener('resize', resize, { passive: true });
+    }
+    function resize() {
+      if (!cv) return;
+      dpr = Math.min(2, window.devicePixelRatio || 1);
+      cv.width = innerWidth * dpr; cv.height = innerHeight * dpr;
+      cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    function loop() {
+      if (!parts.length) { running = false; cx.clearRect(0, 0, innerWidth, innerHeight); return; }
+      cx.clearRect(0, 0, innerWidth, innerHeight);
+      var keep = [];
+      for (var i = 0; i < parts.length; i++) {
+        var p = parts[i];
+        if (p.step(p) !== false) { p.draw(p); keep.push(p); }
+      }
+      parts = keep.length > 1600 ? keep.slice(-1600) : keep;   // 너무 많이 쌓이면 오래된 것부터 버린다
+      requestAnimationFrame(loop);
+    }
+    function add(p) {
+      if (움직임끔) return;
+      ensureCanvas();
+      parts.push(p);
+      if (!running) { running = true; requestAnimationFrame(loop); }
+    }
+
+    /* 반짝이는 별(네 갈래) */
+    function star(x, y, r, c, a) {
+      cx.save(); cx.globalAlpha = a; cx.fillStyle = c; cx.translate(x, y);
+      cx.beginPath();
+      for (var k = 0; k < 8; k++) {
+        var rr = k % 2 ? r * 0.28 : r, ang = k * Math.PI / 4;
+        cx.lineTo(Math.cos(ang) * rr, Math.sin(ang) * rr);
+      }
+      cx.closePath(); cx.fill(); cx.restore();
+    }
+
+    /* ── 폭죽 ── */
+    function firework(x, y, n) {
+      var base = color64k();
+      for (var i = 0; i < n; i++) {
+        var ang = Math.random() * Math.PI * 2, sp = 2 + Math.random() * 4.5;
+        add({
+          x: x, y: y, vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp, life: 60 + Math.random() * 30, t: 0,
+          c: Math.random() < .5 ? base : color64k(), s: 1.6 + Math.random() * 2.2,
+          step: function (p) { p.t++; p.vx *= .97; p.vy = p.vy * .97 + .06; p.x += p.vx; p.y += p.vy; return p.t < p.life; },
+          draw: function (p) {
+            var a = 1 - p.t / p.life;
+            if (p.t % 6 < 3) star(p.x, p.y, p.s * 2.2, p.c, a);
+            else { cx.globalAlpha = a; cx.fillStyle = p.c; cx.beginPath(); cx.arc(p.x, p.y, p.s, 0, 7); cx.fill(); cx.globalAlpha = 1; }
+          }
+        });
+      }
+    }
+
+    /* ── 풍선 ── */
+    function balloon() {
+      var r = 16 + Math.random() * 14;
+      add({
+        x: Math.random() * innerWidth, y: innerHeight + r * 2, r: r, c: color64k(.92),
+        vy: -(1.6 + Math.random() * 1.6), sway: Math.random() * 6.28, t: 0,
+        step: function (p) { p.t++; p.y += p.vy; p.x += Math.sin(p.sway + p.t / 22) * .6; return p.y > -p.r * 4; },
+        draw: function (p) {
+          cx.strokeStyle = 'rgba(80,80,80,.45)'; cx.lineWidth = 1;
+          cx.beginPath(); cx.moveTo(p.x, p.y + p.r * 1.15);
+          cx.quadraticCurveTo(p.x + Math.sin(p.t / 9) * 6, p.y + p.r * 2, p.x, p.y + p.r * 2.8); cx.stroke();
+          cx.fillStyle = p.c; cx.beginPath(); cx.ellipse(p.x, p.y, p.r * .85, p.r * 1.1, 0, 0, 7); cx.fill();
+          cx.beginPath(); cx.moveTo(p.x - 4, p.y + p.r * 1.12); cx.lineTo(p.x + 4, p.y + p.r * 1.12);
+          cx.lineTo(p.x, p.y + p.r * 1.02); cx.fill();
+          cx.fillStyle = 'rgba(255,255,255,.55)';
+          cx.beginPath(); cx.ellipse(p.x - p.r * .3, p.y - p.r * .4, p.r * .18, p.r * .3, -.5, 0, 7); cx.fill();
+        }
+      });
+    }
+
+    /* ── 축하 말풍선 ── */
+    var cheerEl = null, cheerT = null;
+    function cheer(text) {
+      if (!cheerEl) { cheerEl = document.createElement('div'); cheerEl.className = 'cheer'; document.body.appendChild(cheerEl); }
+      cheerEl.textContent = text;
+      cheerEl.classList.add('on');
+      clearTimeout(cheerT);
+      cheerT = setTimeout(function () { cheerEl.classList.remove('on'); }, 2200);
+    }
+
+    var lastCele = {}, NAMES = {};
+    ids.forEach(function (id) { NAMES[id] = (links[id].textContent || '').trim(); });
+    function celebrate(id, big) {
+      var now = Date.now();
+      if (lastCele[id] && now - lastCele[id] < 4000) return;   // 같은 섹션은 4초에 한 번
+      lastCele[id] = now;
+      var nm = NAMES[id] || '';
+      cheer('🎉 「' + nm + '」에 오신 것을 환영합니다!');
+      if (움직임끔) return;
+      var shots = big ? 4 : 2, balloons = big ? 14 : 7;
+      for (var i = 0; i < shots; i++) {
+        (function (k) {
+          setTimeout(function () {
+            firework(innerWidth * (.15 + Math.random() * .7), innerHeight * (.2 + Math.random() * .35), big ? 70 : 45);
+          }, k * 260);
+        })(i);
+      }
+      for (var j = 0; j < balloons; j++) setTimeout(balloon, j * 90);
+    }
+
+    /* ── 지금 보고 있는 섹션 → 메뉴 .active ── */
+    var current = '', clickTarget = '';
+    function setActive(id, why) {
+      if (id === current) return;
+      if (current && links[current]) {
+        links[current].classList.remove('active');
+        var d = links[current].querySelector('.live'); if (d) d.remove();
+      }
+      current = id;
+      if (!id || !links[id]) return;
+      links[id].classList.add('active');
+      var dot = document.createElement('span'); dot.className = 'live'; dot.setAttribute('aria-hidden', 'true');
+      links[id].appendChild(dot);
+      links[id].setAttribute('aria-current', 'true');
+      // 메뉴를 눌러 먼 섹션으로 갈 때 지나치는 섹션에서는 축하하지 않는다
+      if (why !== 'load' && (!clickTarget || clickTarget === id)) celebrate(id, clickTarget === id);
+      if (clickTarget === id) clickTarget = '';
+    }
+    function pick() {
+      var best = '', line = innerHeight * .35;
+      var atBottom = scrollY + innerHeight >= document.documentElement.scrollHeight - 4;
+      ids.forEach(function (id) {
+        var r = document.getElementById(id).getBoundingClientRect();
+        // 맨 아래까지 내려오면 마지막 섹션은 기준선까지 못 올라온다 — 화면 안에 보이면 그것으로
+        if ((r.top <= line || (atBottom && r.top < innerHeight * .8)) && r.bottom > 90) best = id;
+      });
+      return best;
+    }
+    var spyTick = false;
+    addEventListener('scroll', function () {
+      if (spyTick) return; spyTick = true;
+      requestAnimationFrame(function () { spyTick = false; setActive(pick(), 'scroll'); });
+    }, { passive: true });
+    ids.forEach(function (id) {
+      links[id].addEventListener('click', function () {
+        clickTarget = id;
+        setTimeout(function () { if (clickTarget === id) clickTarget = ''; }, 2500);
+        if (current === id) { lastCele[id] = 0; celebrate(id, true); clickTarget = ''; }   // 이미 그 섹션이면 바로 축하
+      });
+    });
+    setTimeout(function () { setActive(pick(), 'load'); }, 300);
+
+    /* ── 누를 때마다 혜성 + 반짝이는 별빛 ── */
+    function comet(x, y) {
+      var ang = -Math.PI / 4 - Math.random() * Math.PI / 6 + (Math.random() < .5 ? 0 : -Math.PI / 2);
+      var sp = 7 + Math.random() * 3, head = color64k();
+      add({
+        x: x, y: y, vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp, t: 0, life: 42, c: head, trail: [],
+        step: function (p) {
+          p.t++; p.x += p.vx; p.y += p.vy; p.vx *= .985; p.vy *= .985;
+          p.trail.push([p.x, p.y]); if (p.trail.length > 18) p.trail.shift();
+          if (p.t % 2 === 0) sparkle(p.x - p.vx * 2, p.y - p.vy * 2);
+          return p.t < p.life;
+        },
+        draw: function (p) {
+          var a = 1 - p.t / p.life;
+          for (var i = 1; i < p.trail.length; i++) {
+            cx.strokeStyle = p.c; cx.globalAlpha = a * i / p.trail.length; cx.lineWidth = 1 + i / 3.5;
+            cx.beginPath(); cx.moveTo(p.trail[i - 1][0], p.trail[i - 1][1]); cx.lineTo(p.trail[i][0], p.trail[i][1]); cx.stroke();
+          }
+          cx.globalAlpha = a;
+          var g = cx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 12);
+          g.addColorStop(0, '#fff'); g.addColorStop(.35, p.c); g.addColorStop(1, 'rgba(255,255,255,0)');
+          cx.fillStyle = g; cx.beginPath(); cx.arc(p.x, p.y, 12, 0, 7); cx.fill();
+          cx.globalAlpha = 1;
+        }
+      });
+    }
+    function sparkle(x, y) {
+      add({
+        x: x + (Math.random() - .5) * 14, y: y + (Math.random() - .5) * 14, t: 0, life: 34 + Math.random() * 20,
+        r: 2.5 + Math.random() * 4, c: color64k(), ph: Math.random() * 6.28, vy: .25 + Math.random() * .4,
+        step: function (p) { p.t++; p.y += p.vy; return p.t < p.life; },
+        draw: function (p) {
+          var tw = .55 + .45 * Math.sin(p.ph + p.t / 2.2);           // 반짝반짝
+          star(p.x, p.y, p.r * tw, p.c, (1 - p.t / p.life) * tw);
+        }
+      });
+    }
+    document.addEventListener('pointerdown', function (e) {
+      if (움직임끔) return;
+      comet(e.clientX, e.clientY);
+      for (var i = 0; i < 6; i++) sparkle(e.clientX, e.clientY);
+    }, { passive: true });
   })();
 </script>
 
