@@ -190,6 +190,13 @@
   .hero::after{content:"";position:absolute;inset:0;pointer-events:none;
         background:radial-gradient(900px 420px at 82% -12%,rgba(255,255,255,.20),transparent 60%)}
   .hero .wrap{position:relative;z-index:1}
+  /* ── 휴대폰으로 찍으면 이 홈페이지가 바로 열리는 QR — 2026-11-16 별님 ── */
+  .hero-qr{position:absolute;top:0;right:20px;z-index:2;background:#fff;color:#1e1b4b;
+           border-radius:18px;padding:10px 10px 8px;text-align:center;width:150px;
+           box-shadow:0 14px 34px rgba(15,10,60,.35);border:3px solid rgba(253,230,138,.9)}
+  .hero-qr img{display:block;width:130px;height:130px;image-rendering:pixelated;border-radius:6px}
+  .hero-qr span{display:block;font-size:13px;font-weight:800;line-height:1.35;margin-top:6px}
+  @media(max-width:900px){.hero-qr{display:none}}
   .eyebrow{display:inline-block;font-size:16px;letter-spacing:.10em;
            background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.28);
            padding:8px 18px;border-radius:999px;font-weight:800}
@@ -569,6 +576,10 @@
 <!-- HERO -->
 <header class="hero" id="top">
   <div class="wrap">
+    <a class="hero-qr" href="https://qkrgudwhd.github.io/Auto365Blog/" aria-label="휴대폰으로 홈페이지 열기 QR코드">
+      <img src="img/qr_home.png" alt="홈페이지 QR코드" width="130" height="130">
+      <span>📱 휴대폰으로 찍으면<br>바로 열려요</span>
+    </a>
     <span class="eyebrow">랜딩페이지 · 365blog · e_book_maker 4기 · 6주 완성</span>
     <h1>설치도, 코딩도<br><span class="hl">클로드가 합니다</span></h1>
     <p class="lead">여러분이 직접 설치하는 건 <b>클로드 하나뿐</b>입니다.<br>
