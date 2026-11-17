@@ -183,6 +183,9 @@
   .cheer.on{opacity:1;transform:translate(-50%,0) scale(1)}
   @media(max-width:560px){.cheer{font-size:15px;top:76px;padding:9px 16px}}
   #fxcanvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:10000}
+  /* 수강료 칸 — 금액이 바뀔 때 톡 튄다 */
+  @keyframes feepop{0%{transform:scale(.6);opacity:0}60%{transform:scale(1.12);opacity:1}100%{transform:scale(1)}}
+  .hero .fee .now.pop{display:inline-block;animation:feepop .45s cubic-bezier(.34,1.56,.64,1)}
 
   /* ===== HERO ===== */
   .hero{background:linear-gradient(135deg,#4c1d95 0%,#6d28d9 42%,#2563eb 100%);
@@ -591,11 +594,12 @@
       <span class="pill">💻 온라인 줌 실시간</span>
     </div>
     <!-- 수강료 — 닫힌 채로 시작한다. 눌러야 보인다. -->
-    <details class="fee">
+    <!-- 2026-11-17 별님 — 누를 때마다 「닫힘 → 1,100,000원 → 390,000원 → 닫힘」 차례로 -->
+    <details class="fee" id="feeBox">
       <summary><span>💰 4기 수강료 · 얼리버드 혜택 보기</span><span class="cv" aria-hidden="true">⌄</span></summary>
       <div class="feein">
-        <div><span class="was">정가 3,300,000원</span><span class="now"><span class="cnt">1,100,000</span>원</span></div>
-        <div class="r2">4기 얼리버드 · <b>220만원 할인</b>으로 모십니다</div>
+        <div><span class="was">정가 3,300,000원</span><span class="now"><span class="cnt" id="feeAmt">1,100,000</span>원</span></div>
+        <div class="r2">4기 얼리버드 · <b id="feeOff">220만원 할인</b>으로 모십니다</div>
         <div class="r3"><b>365blog · e_book_maker 프로그램 소스 전체 제공</b></div>
       </div>
     </details>
@@ -1410,6 +1414,29 @@
     } else {
       els.forEach(run);
     }
+  })();
+
+  /* ── 수강료 칸: 누를 때마다 닫힘 → 1,100,000원 → 390,000원 → 닫힘 (2026-11-17 별님) ── */
+  (function () {
+    var box = document.getElementById('feeBox');
+    if (!box) return;
+    var sum = box.querySelector('summary'), amt = document.getElementById('feeAmt'),
+        off = document.getElementById('feeOff'), now = amt && amt.parentNode;
+    var PRICES = [{ amt: '1,100,000', off: '220만원 할인' },    // 정가 3,300,000 - 1,100,000
+                  { amt: '390,000',   off: '291만원 할인' }];   // 정가 3,300,000 -   390,000
+    var step = 0;                                               // 0 닫힘 · 1 110만 · 2 39만
+    function show(i) {
+      amt.textContent = PRICES[i].amt;
+      off.textContent = PRICES[i].off;
+      now.classList.remove('pop'); void now.offsetWidth; now.classList.add('pop');
+    }
+    sum.addEventListener('click', function (e) {
+      e.preventDefault();                                       // <details> 기본 열고닫기 대신 차례대로
+      step = (step + 1) % 3;
+      if (step === 0) { box.open = false; return; }
+      box.open = true;
+      show(step - 1);
+    });
   })();
 
   /* ══════════════════════════════════════════════════════════
