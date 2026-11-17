@@ -1,0 +1,48 @@
+/* 모든 쪽이 함께 쓰는 입체 메뉴 — index·store·privacy·refund·terms·soon
+   🔑 한 파일에만 둔다. 쪽마다 따로 두면 한 쪽만 옛 모양으로 남는다(2026-11-17 판매 상품 쪽). */
+@keyframes grad{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+/* ===== NAV 입체·그라데이션 (2026-11-16 별님 「메뉴가 도드라지게 입체적으로」) ===== */
+.nav{background:linear-gradient(180deg,rgba(255,255,255,.97),rgba(245,243,255,.94))}
+.nav::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:3px;pointer-events:none;
+     background:linear-gradient(90deg,#6d28d9,#2563eb,#06b6d4,#ec4899,#f59e0b,#6d28d9);
+     background-size:300% 100%;animation:grad 8s linear infinite;opacity:.85}
+.nav ul{gap:8px}
+.nav a.menu{
+     background:linear-gradient(180deg,#ffffff 0%,#f3efff 55%,#e6defd 100%);
+     border:1px solid rgba(109,40,217,.16);
+     box-shadow:inset 0 1px 0 rgba(255,255,255,.95),
+                0 3px 0 rgba(109,40,217,.18),
+                0 8px 16px rgba(76,29,149,.10);
+     text-shadow:0 1px 0 rgba(255,255,255,.9);
+     transform:translateY(0) perspective(400px) rotateX(0deg);
+     transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s ease,background .25s ease,color .25s}
+.nav a.menu:hover{
+     background:linear-gradient(180deg,#ffffff 0%,#ede9fe 50%,#dbeafe 100%);
+     transform:translateY(-3px) perspective(400px) rotateX(8deg);
+     box-shadow:inset 0 1px 0 #fff,0 6px 0 rgba(109,40,217,.22),0 14px 24px rgba(76,29,149,.18)}
+.nav a.menu:active{transform:translateY(2px);box-shadow:inset 0 2px 6px rgba(76,29,149,.25),0 1px 0 rgba(109,40,217,.2)}
+/* 지금 보고 있는 메뉴 — 색이 흐르고, 빛이 지나가고, 점이 깜박인다 = 「동작 중」 */
+.nav a.menu.active{
+     color:#fff !important;text-shadow:0 1px 2px rgba(0,0,0,.25);
+     background:linear-gradient(120deg,#6d28d9,#2563eb,#06b6d4,#ec4899,#6d28d9);
+     background-size:300% 300%;border-color:transparent;overflow:hidden;
+     animation:grad 3.2s ease infinite,navlive 1.8s ease-in-out infinite;
+     transform:translateY(-2px) perspective(400px) rotateX(6deg)}
+.nav a.menu.active::before{width:0 !important}
+.nav a.menu.active::after{content:"";position:absolute;top:0;left:-60%;width:45%;height:100%;
+     background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);
+     transform:skewX(-20deg);animation:navshine 2.4s ease-in-out infinite;pointer-events:none}
+.nav a.menu .live{display:inline-block;width:8px;height:8px;border-radius:50%;margin-left:7px;
+     vertical-align:middle;background:#fde047;box-shadow:0 0 0 0 rgba(253,224,71,.8);
+     animation:livedot 1.2s ease-out infinite}
+/* 2026-11-16 별님 「글자 폰트를 조금 줄여주세요」 — 19px → 17px (좁은 화면은 더 작게) */
+.nav a.menu{white-space:nowrap;font-size:17px;padding:7px 12px}
+.nav .apply{font-size:17px}
+@media(max-width:1280px){.nav ul{gap:5px} .nav a.menu{font-size:15px;padding:6px 9px}
+     .nav .apply{font-size:16px;padding:9px 15px}}
+@media(max-width:1060px){.nav a.menu{font-size:14px;padding:6px 8px} .nav .logo{font-size:21px}}
+@keyframes navlive{0%,100%{box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 4px 0 #4c1d95,0 10px 22px rgba(109,40,217,.35)}
+                   50%{box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 4px 0 #4c1d95,0 14px 34px rgba(37,99,235,.55)}}
+@keyframes navshine{0%{left:-60%}60%,100%{left:130%}}
+@keyframes livedot{0%{box-shadow:0 0 0 0 rgba(253,224,71,.85)}100%{box-shadow:0 0 0 9px rgba(253,224,71,0)}}
+@media (prefers-reduced-motion: reduce){.nav::after,.nav a.menu.active,.nav a.menu.active::after,.nav a.menu .live{animation:none !important}}
