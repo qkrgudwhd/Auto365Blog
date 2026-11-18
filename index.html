@@ -1379,17 +1379,27 @@
     if (!box) return;
     var sum = box.querySelector('summary'), amt = document.getElementById('feeAmt'),
         off = document.getElementById('feeOff'), now = amt && amt.parentNode;
-    var PRICES = [{ amt: '1,100,000', off: '220만원 할인' },    // 정가 3,300,000 - 1,100,000
-                  { amt: '390,000',   off: '291만원 할인' }];   // 정가 3,300,000 -   390,000
-    var step = 0;                                               // 0 닫힘 · 1 110만 · 2 39만
+    // 🔴 2026-11-18 별님 — 4단계: 정가 330만 → 110만 → 77만 → 39만 (그다음 누르면 닫힘)
+    var PRICES = [{ amt: '3,300,000', off: '정가',        was: false },   // 출발점 = 정가
+                  { amt: '1,100,000', off: '220만원 할인', was: true },    // 3,300,000 - 1,100,000
+                  { amt: '770,000',   off: '253만원 할인', was: true },    // 3,300,000 -   770,000
+                  { amt: '390,000',   off: '291만원 할인', was: true }];   // 3,300,000 -   390,000
+    var wasEl = box.querySelector('.feein .was');
+    var r2 = off && off.parentNode, r2Html = r2 ? r2.innerHTML : '';
+    var step = 0;                                               // 0 닫힘 · 1~4 = PRICES[0~3]
     function show(i) {
-      amt.textContent = PRICES[i].amt;
-      off.textContent = PRICES[i].off;
+      var p = PRICES[i];
+      amt.textContent = p.amt;
+      if (wasEl) wasEl.style.display = p.was ? '' : 'none';     // 정가 단계에서는 줄 그은 정가를 숨긴다
+      if (r2) {
+        if (p.was) { r2.innerHTML = r2Html; off = document.getElementById('feeOff'); off.textContent = p.off; }
+        else r2.innerHTML = '4기 <b>정가</b>입니다 · 한 번 더 누르면 얼리버드 할인가';
+      }
       now.classList.remove('pop'); void now.offsetWidth; now.classList.add('pop');
     }
     function next(e) {
       e.preventDefault();                                       // <details> 기본 열고닫기 대신 차례대로
-      step = (step + 1) % 3;
+      step = (step + 1) % (PRICES.length + 1);
       if (step === 0) { box.open = false; return; }
       box.open = true;
       show(step - 1);
